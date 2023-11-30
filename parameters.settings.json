@@ -1,0 +1,114 @@
+{
+  "parameters": [
+    {
+      "name": "samplePlan",
+      "label": "Input files",
+      "usage": "Path to sample plan (csv format)",
+      "type": "path",
+      "choices": [],
+      "nargs": "+",
+      "default_value": null,
+      "pattern": ".*\\*.*",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Mandatory arguments"
+    },
+    {
+      "name": "profile",
+      "label": "Configuration profile(s)",
+      "usage": "Configuration profile to use. Can use multiple (comma separated).",
+      "type": "string",
+      "choices": [
+        "conda", "cluster", "docker", "multiconda", "conda", "path", "multipath", "singularity"
+      ],
+      "nargs": "+",
+      "default_value": null,
+      "pattern": ".*",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Mandatory arguments"
+    },
+    {
+      "name": "genome",
+      "label": "Reference genome",
+      "usage": "Name of the reference genome.",
+      "type": "string",
+      "nargs": "1",
+      "choices": [],
+      "default_value": false,
+      "pattern": "",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Mandatory arguments"
+    },
+
+    {
+      "name": "genomeAnnotationPath",
+      "label": "Annotation path",
+      "usage": "Path to genome annotations folder",
+      "type": "path",
+      "choices": [],
+      "nargs": "+",
+      "default_value": null,
+      "pattern": ".*\\*.*",
+      "render": "textfield",
+      "arity": 0,
+      "group": "References"
+    },
+
+    {
+      "name": "genomeAnnotationSibPath",
+      "label": "Annotation path",
+      "usage": "Path to genome annotations folder",
+      "type": "path",
+      "choices": [],
+      "nargs": "+",
+      "default_value": null,
+      "pattern": ".*\\*.*",
+      "render": "textfield",
+      "arity": 0,
+      "group": "References"
+    },
+
+    {
+      "name": "outDir",
+      "label": "Output directory",
+      "usage": "The output directory where the results will be saved",
+      "type": "path",
+      "nargs": 1,
+      "choices": [],
+      "default_value": null,
+      "pattern": ".*",
+      "render": "file",
+      "arity": 0,
+      "group": "Other options"
+    },
+  
+    {
+      "name": "metadata",
+      "label": "MultiQC metadata file",
+      "usage": "Specify a custom metadata file for MultiQC",
+      "type": "path",
+      "nargs": 1,
+      "choices": [],
+      "default_value": null,
+      "pattern": ".*",
+      "render": "file",
+      "arity": 0,
+      "group": "Other options"
+    },
+    {
+      "name": "name",
+      "label": "Name for the pipeline run",
+      "usage": "Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic",
+      "type": "string",
+      "nargs": 1,
+      "choices": [],
+      "default_value": "25.MB",
+      "pattern": ".*",
+      "render": "textfield",
+      "arity": 0,
+      "group": "Other options"
+    }
+  ]
+}

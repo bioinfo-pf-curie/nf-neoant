@@ -51,7 +51,7 @@ process arribaFusion {
 	    # extract paired-end reads for realignment
 	    LAYOUT=="PE" {
 	        if (\$1==name1) { # we have encountered both mates
-	            if (realign1 || realign()) { print mate1 "\n" \$0 > STAR_PIPE }
+	            if (realign1 || realign()) { print mate1 "\\n" \$0 > STAR_PIPE }
 	        } else { # cache mate1
 	            mate1=\$0; name1=\$1; realign1=realign()}
 	    }

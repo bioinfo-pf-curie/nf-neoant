@@ -2,11 +2,10 @@
  * pVacseq workflow
  */
 
-include { pvacseqRun } from '../process/pvacseqRun'
-
-include { hlaLaRun } from '../process/hlaLaRun'
 include { hlaIConvert } from '../process/hlaIConvert'
+include { hlaLaRun } from '../process/hlaLaRun'
 include { hlaIIConvert } from '../process/hlaIIConvert'
+include { pvacseqRun } from '../process/pvacseqRun'
 
 workflow pVacseqFlow {
 
@@ -20,11 +19,6 @@ workflow pVacseqFlow {
   minVafRna
   minVafNormal
   iedbPath 
-
-  // trsFasta // Channel path(transcriptsFasta)
-  // gtf // Channel path(gtf)
-  // starIndex
-  // gff
 
   main:
   chVersions = Channel.empty()
@@ -47,18 +41,18 @@ workflow pVacseqFlow {
     hlaLaRun.out.hlaIIfile // hlaIIfile
     )
 
-  // pvacseqRun(
-  //   sp.map{it -> it[1]}, // sampleName
-  //   sp.map{it -> it[2]}, // normalName
-  //   annotVcf,
-  //   hlaIConvert.out.hlaI,
-  //   hlaIIConvert.out.hlaII,
-  //   algos,
-  //   minVafDna,
-  //   minVafRna,
-  //   minVafNormal,
-  //   iedbPath 
-  //   )
+  pvacseqRun(
+    sp.map{it -> it[1]}, // sampleName
+    sp.map{it -> it[2]}, // normalName
+    annotVcf,
+    hlaIConvert.out.hlaI,
+    hlaIIConvert.out.hlaII,
+    algos,
+    minVafDna,
+    minVafRna,
+    minVafNormal,
+    iedbPath 
+    )
 
   // chVersions = chVersions.mix(salmonQuantFromBam.out.versions)
 

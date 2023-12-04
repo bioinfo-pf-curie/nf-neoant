@@ -130,8 +130,8 @@ chGraphDir    = params.graphDir      ? Channel.fromPath(params.graphDir, checkIf
 chGraphName   = params.graphName  //    ? Channel.Value(params.graphName, checkIfExists: true).collect()       : Channel.empty()
 
 
-chBlackList   = params.blacklist_tsv      ? Channel.fromPath(params.blacklist_tsv, checkIfExists: true).collect()       : Channel.empty()
-chProteinGff  = params.protein_gff      ? Channel.fromPath(params.protein_gff, checkIfExists: true).collect()       : Channel.empty()
+chBlackList   = params.blackList      ? Channel.fromPath(params.blackList, checkIfExists: true).collect()       : Channel.empty()
+chProteinGff  = params.proteinGff      ? Channel.fromPath(params.proteinGff, checkIfExists: true).collect()       : Channel.empty()
 chLayout      = params.layout
 
 chAlgos       = params.algos     
@@ -141,6 +141,9 @@ chMinVafNormal   = params.min_vaf_normal
 chIedbPath    = params.iedb_path      ? Channel.fromPath(params.iedb_path, checkIfExists: true).collect()       : Channel.empty()
 
 chVtTools     = params.vtTools      ? Channel.fromPath(params.vtTools, checkIfExists: true).collect()       : Channel.empty()
+
+chSpecies     = params.species
+chMiLicense     = params.miLicense    
 
 /*
 ==================================
@@ -157,8 +160,7 @@ include { pVacFuseFlow } from './nf-modules/local/subworkflow/pVacFuseFlow'
 // Processes
 include { getSoftwareVersions } from './nf-modules/common/process/getSoftwareVersions'
 include { outputDocumentation } from './nf-modules/common/process/outputDocumentation'
-// include { fastqc } from './nf-modules/common/process/fastqc'
-// include { multiqc } from './nf-modules/local/process/multiqc'
+include { mixcr } from './nf-modules/local/process/mixcr'
 
 /*
 =====================================
@@ -237,9 +239,22 @@ workflow {
           chFastaSibFai,
           chLayout,
           chBlackList,
-          chProteinGff
+          chProteinGff,
+          pVacseqFlow.out.hlaIfile,
+          pVacseqFlow.out.hlaIIfile,
+          chAlgos,
+          chIedbPath
         )
 
+    //*******************************************
+    // mixcr
+
+
+    mixcr(
+      chRawData.map{it -> [it[1],it[8],it[9]]}, // sampleName, fastqRnaR1, fastqRnaR2
+      chSpecies,
+      chMiLicense
+      )
 
 
     // chCounts = salmonQuantFromBamFlow.out.countsGene

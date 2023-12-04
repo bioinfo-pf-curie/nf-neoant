@@ -16,12 +16,16 @@ workflow pVacFuseFlow {
   layout
   blacklist_tsv
   protein_gff
+  hlaI
+  hlaII
+  algos
+  iedbPath
 
   main:
   chVersions = Channel.empty()
 
   arribaFusion(
-    sp.map{it -> [it[1],it[9],it[10]]}, // sampleName, sampleRnaBam, sampleRnaBamIndex
+    sp.map{it -> [it[1],it[10],it[11]]}, // sampleName, sampleRnaBam, sampleRnaBamIndex
     starIndex,
     annotation_gtf,
     fasta,
@@ -31,11 +35,15 @@ workflow pVacFuseFlow {
     protein_gff
   )
 
-  // pvacfuseRun(
-  //   starAlign.out.transcriptsBam,
-  //   trsFasta,
-  //   gff
-  // )
+  pvacfuseRun(
+    sp.map{it -> it[1]}, 
+    arribaFusion.out.arribaFus,
+    hlaI,
+    hlaII,
+    algos,
+    iedbPath
+  )
+
 
   // chVersions = chVersions.mix(salmonQuantFromBam.out.versions)
 

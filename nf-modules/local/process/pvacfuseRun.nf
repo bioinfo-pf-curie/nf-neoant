@@ -11,13 +11,14 @@ process pvacfuseRun {
   input:
   val sampleName
   path fusionFile //star_arriba.fusions.tsv
-  val hlaI
-  val hlaII
+  path hlaI
+  path hlaII
   val algos
   path iedbPath
 
   output:
-  path("*vt.annot.vcf"), emit: rnaCovVcf
+  path("${sampleName}/*/*.fa"), emit: pvacFuseFa
+  path("${sampleName}/*/*.tsv"), emit: pvacFuseTsv
 
   when:
   task.ext.when == null || task.ext.when
@@ -25,19 +26,20 @@ process pvacfuseRun {
   script:
   """
 
-  hla_types_pvac_total=\$(echo \${hlaI},\${hlaII} | sed "s|,\$||g") 
-
+  hlaIt=\$(cat ${hlaI})
+  hlaIIt=\$(cat ${hlaII})
+  hla_types_pvac_total=\$(echo \${hlaIt},\${hlaIIt} | sed "s|,\$||g") 
 
   pvacfuse run \
         ${fusionFile} \
         ${sampleName} \
-        ${hla_types_pvac_total} \
+        \${hla_types_pvac_total} \
         ${algos} \
         ${sampleName} \
         --class-i-epitope-length 8,9,10,11 \
         --class-ii-epitope-length 12,13,14,15,16,17,18 \
         --top-score-metric lowest \
-        --iedb-install-directory ${iedb_path} \
+        --iedb-install-directory ${iedbPath} \
         --n-threads ${task.cpus} \
         --read-support 5 \
         --expn-val 0.1 \

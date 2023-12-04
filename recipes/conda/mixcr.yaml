@@ -1,0 +1,8 @@
+channels:
+  - milaboratories
+  - conda-forge
+  - bioconda
+  - defaults
+  - default
+dependencies:
+  - mixcr

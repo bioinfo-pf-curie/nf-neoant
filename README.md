@@ -1,5 +1,4 @@
-# Nextflow pipeline 
-<!-- TODO update with the name of the pipeline -->
+# nf-neoAnt pipeline 
 
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A519.10.0-brightgreen.svg)](https://www.nextflow.io/)
 [![Install with](https://anaconda.org/anaconda/conda-build/badges/installer/conda.svg)](https://conda.anaconda.org/anaconda)
@@ -13,154 +12,66 @@ It supports [conda](https://docs.conda.io) package manager and  [singularity](ht
 
 ## Pipeline summary
 
-<!-- TODO 
+The objective of the pipeline is to predict tumor-specific neoantigen based on both DNA and RNA next generation sequencing data from patients.
 
-Describe here the main steps of the pipeline.
+* HLA typing are divided into two parts:
+	- [Optitype](https://github.com/FRED-2/OptiType) (v1.3.5) for MHCI, based on the [nf-core hlatyping pipeline](https://nf-co.re/hlatyping/2.0.0)
+	- [HLA-LA](https://github.com/DiltheyLab/HLA-LA) (v1.0.3) for MHCII
 
-1. Step 1 does...
-2. Step 2 does...
-3. etc
+* Detection of neoantigen is performed by the [pVACtools suite](https://pvactools.readthedocs.io) (v4.0.6). The pipeline is divided into two parts, one focusing on DNA-based analysis (pVACseq) and the other one based on fusions events derived from RNAseq data (pVACfuse).
 
--->
+### pVACseq
 
-### Quick help
+* Paired RNAseq reads are aligned using [STAR](https://github.com/alexdobin/STAR) (v2.7.6a) on the STAR index using the --quantMode TranscriptomeSAM option to obtain a transcriptome-based alignments BAM file. Per gene and per transcript TPM (transcript per million) are then estimated using [Salmon](https://github.com/COMBINE-lab/salmon) (v.10.2) with the adequate Gencode GFF3 and transcripts fasta files.
 
-```bash
-nextflow run main.nf --help
-N E X T F L O W  ~  version 19.10.0
-Launching `main.nf` [stupefied_darwin] - revision: aa905ab621
-=======================================================
+* Small somatic variants (snvs, indels) were first called using the [GATK](https://gatk.broadinstitute.org/hc/en-us) Mutect2 (v4.1.8.0). 
+	- Variants were annotated using [VEP](http://useast.ensembl.org/info/docs/tools/vep/script/index.html) (ENSEMBL v110.1).
+	- Both gene (GX) and transcript (TX) expressions were then added using [vatools](https://github.com/griffithlab/VAtools) (5.1.0) and previously computed expression files
+	- RNA depth (RDP) and RNA allelic ratio (RAF) were then added a combination of [vt](https://github.com/atks/vt) (v0.5), GATK SelectVariants and [bam-readcount](https://github.com/genome/bam-readcount) (v0.8).
 
-Usage:
+* pVACseq was then run using HLA typing files (for MHCI & MHCII) on the resulting variant file.
 
-Mandatory arguments:
---reads [file]                   Path to input data (must be surrounded with quotes)
---samplePlan [file]              Path to sample plan file if '--reads' is not specified
---genome [str]                   Name of the reference genome. See the `--genomeAnnotationPath` to defined the annotation path
--profile [str]                   Configuration profile to use (multiple profiles can be specified with comma separated values)
+### pVACfuse
 
-Inputs:
---design [file]                  Path to design file for extended analysis
---singleEnd [bool]               Specifies that the input is single-end reads
-
-Skip options: All are false by default
---skipSoftVersion [bool]         Do not report software version
---skipMultiQC [bool]             Skip MultiQC
-
-Other options:
---metadata [dir]                Add metadata file for multiQC report
---outDir [dir]                  The output directory where the results will be saved
--w/--work-dir [dir]             The temporary directory where intermediate data will be saved
--name [str]                      Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic
-
-=======================================================
-Available profiles
--profile test                    Run the test dataset
--profile conda                   Build a new conda environment before running the pipeline. Use `--condaCacheDir` to define the conda cache path
--profile multiconda              Build a new conda environment per process before running the pipeline. Use `--condaCacheDir` to define the conda cache path
--profile path                    Use the installation path defined for all tools. Use `--globalPath` to define the installation path
--profile multipath               Use the installation paths defined for each tool. Use `--globalPath` to define the installation path
--profile docker                  Use the Docker images for each process
--profile singularity             Use the Singularity images for each process. Use `--singularityPath` to define the path of the singularity containers
--profile cluster                 Run the workflow on the cluster, instead of locally
-
-```
+* [Arriba](https://github.com/suhrig/arriba) (v2.4.0) was run on a subset of the original STAR aligned file containing only reads of putative relevance to fusion detection, such as unmapped and clipped reads.
+* pVACfuse was then run on the list of filtered fusions of interest, using both HLA typing files. 
 
 
-### Quick run
 
-The pipeline can be run on any infrastructure from a list of input files or from a sample plan as follows:
-
-#### Run the pipeline on a test dataset
-
-See the file `conf/test.config` to set your test dataset.
+#### Run the pipeline from a sample plan
 
 ```bash
-nextflow run main.nf -profile test,conda
+nextflow run main.nf --samplePlan mySamplePlan.csv  --genome 'assembly' --genomeAnnotationPath /my/annotation/path --outDir /my/output/dir
 
 ```
-
-#### Run the pipeline from a `sample plan` and a `design` file
-
-```bash
-nextflow run main.nf --samplePlan mySamplePlan.csv --design myDesign.csv --genome 'hg19' --genomeAnnotationPath /my/annotation/path --outDir /my/output/dir
-
-```
-
-### Defining the '-profile'
-
-By default (whithout any profile), Nextflow excutes the pipeline locally, expecting that all tools are available from your `PATH` environment variable.
-
-In addition, several Nextflow profiles are available that allow:
-* the use of [conda](https://docs.conda.io) or containers instead of a local installation,
-* the submission of the pipeline on a cluster instead of on a local architecture.
-
-The description of each profile is available on the help message (see above).
-
-Here are a few examples to set the profile options:
-
-#### Run the pipeline locally, using a global environment where all tools are installed (build by conda for instance)
-```bash
--profile path --globalPath /my/path/to/bioinformatics/tools
-```
-
-#### Run the pipeline on the cluster, using the Singularity containers
-```bash
--profile cluster,singularity --singularityPath /my/path/to/singularity/containers
-```
-
-#### Run the pipeline on the cluster, building a new conda environment
-```bash
--profile cluster,conda --condaCacheDir /my/path/to/condaCacheDir
-
-```
-
-For details about the different profiles available, see [Profiles](docs/profiles.md).
 
 ### Sample plan
 
 A sample plan is a csv file (comma separated) that lists all the samples with a biological IDs.
 The sample plan is expected to contain the following fields (with no header):
 
-```
-SAMPLE_ID,SAMPLE_NAME,path/to/R1/fastq/file,path/to/R2/fastq/file (for paired-end only)
-```
-
-### Design control
-
-A design file is a csv file that provides additional details on the samples and how they should be processed.
-Here is a simple example:
-
-```
-SAMPLEID,CONTROLID,GROUP
-A949C08,A949C02,1
-...
-```
-
-<!-- TODO - update the design -->
-
-### Genome annotations
-
-The pipeline does not provide any genomic annotations but expects them to be already available on your system. The path to the genomic annotations can be set with the `--genomeAnnotationPath` option as follows:
-
-```bash
-nextflow run main.nf --samplePlan mySamplePlan.csv --design myDesign.csv --genome 'hg19' --genomeAnnotationPath /my/annotation/path --outDir /my/output/dir
+              meta.sampleId = row[0]
+              meta.sampleName = row[1]
+              meta.normalName = row[2]
+              def fastqDnaR1 = row[3]
+              def fastqDnaR2 = row[4]
+              def sampleDnaBam = row[5]
+              def sampleDnaBamIndex = row[6]
+              def vcf = row[7]
+              def fastqRnaR1 = row[8]
+              def fastqRnaR2 = row[9]
+              def sampleRnaBam = row[10]
+              def sampleRnaBamIndex = row[11]
+              def hlaI = row[12]
+              return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex, hlaI] 
 
 ```
-
-For more details see  [Reference genomes](docs/referenceGenomes.md).
-
-## Full Documentation
-
-1. [Installation](docs/installation.md)
-2. [Reference genomes](docs/referenceGenomes.md)
-3. [Running the pipeline](docs/usage.md)
-4. [Output and how to interpret the results](docs/output.md)
-5. [Troubleshooting](docs/troubleshooting.md)
+sampleID, sampleName, normalName, path_to_fastqDnaR1, path_to_fastqDnaR2, path_to_sampleDnaBam, path_to_sampleDnaBamIndex, path_to_vcf,  path_to_fastqRnaR1, path_to_fastqRnaR2, path_to_sampleRnaBam, path_to_sampleRnaBamIndex, path_to_hlaI
+```
 
 ## Credits
 
-This pipeline has been written by <!-- TODO -->
+This pipeline has been written by Institut Curie bioinformatics platform CUBIC (E.Girard, N.Servant). The project was funded by IMMUcan, the integrated European immuno-oncology profiling platform. 
 
 ## Contacts
 

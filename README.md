@@ -50,21 +50,6 @@ nextflow run main.nf --samplePlan mySamplePlan.csv  --genome 'assembly' --genome
 A sample plan is a csv file (comma separated) that lists all the samples with a biological IDs.
 The sample plan is expected to contain the following fields (with no header):
 
-              meta.sampleId = row[0]
-              meta.sampleName = row[1]
-              meta.normalName = row[2]
-              def fastqDnaR1 = row[3]
-              def fastqDnaR2 = row[4]
-              def sampleDnaBam = row[5]
-              def sampleDnaBamIndex = row[6]
-              def vcf = row[7]
-              def fastqRnaR1 = row[8]
-              def fastqRnaR2 = row[9]
-              def sampleRnaBam = row[10]
-              def sampleRnaBamIndex = row[11]
-              def hlaI = row[12]
-              return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex, hlaI] 
-
 ```
 sampleID, sampleName, normalName, path_to_fastqDnaR1, path_to_fastqDnaR2, path_to_sampleDnaBam, path_to_sampleDnaBamIndex, path_to_vcf,  path_to_fastqRnaR1, path_to_fastqRnaR2, path_to_sampleRnaBam, path_to_sampleRnaBamIndex, path_to_hlaI
 ```

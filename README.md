@@ -41,6 +41,8 @@ The objective of the pipeline is to predict tumor-specific neoantigen based on b
 
 #### Run the pipeline from a sample plan
 
+#### Arguments
+
 - sample_plan: csv file containing per-row samples information
 
 - assembly: the genome assembly for the analysis (example: hg38)

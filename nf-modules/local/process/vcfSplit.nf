@@ -3,26 +3,21 @@
  */
 
 process vcfSplit {
-  tag "${sampleName}"
+  tag "${meta.sampleName}"
   label 'gatk_bam_readcount'
   label "medCpu"
   label "medMem"
 
   input:
-  val sampleName
-  path exprVcf
+  tuple val(meta), path(exprVcf), path(sampleRnaBam), path(sampleRnaBamIndex)
   path vt
   path fasta
   path fastaIndex
   path fastaDict
-  path sampleRnaBam
-  path sampleRnaBamIndex
-  
+
   output:
-  path("*vt.snv.vcf"), emit: splitSnvVcf
-  path("*vt.indel.vcf"), emit: splitIndelVcf
-  path("*vt.readcount.snv.txt"), emit: splitSnvTxt
-  path("*vt.readcount.indel.txt"), emit: splitIndelTxt
+  tuple val(meta), path("*vt.snv.vcf"),path("*vt.indel.vcf"),path("*vt.readcount.snv.txt"),path("*vt.readcount.indel.txt"), emit: splitVcf
+
 
   when:
   task.ext.when == null || task.ext.when

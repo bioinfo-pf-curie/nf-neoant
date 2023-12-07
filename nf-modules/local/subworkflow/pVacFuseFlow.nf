@@ -8,7 +8,7 @@ include { pvacfuseRun } from '../process/pvacfuseRun'
 workflow pVacFuseFlow {
 
   take:
-  sp // Channel samplePlan
+  rnaBam   // sampleName, RnaBam, RnaBamIndex
   starIndex
   annotation_gtf
   fasta
@@ -16,8 +16,7 @@ workflow pVacFuseFlow {
   layout
   blacklist_tsv
   protein_gff
-  hlaI
-  hlaII
+  hlat // sampleName, hlaIfile, hlaIIfile
   algos
   iedbPath
 
@@ -25,7 +24,7 @@ workflow pVacFuseFlow {
   chVersions = Channel.empty()
 
   arribaFusion(
-    sp.map{it -> [it[1],it[10],it[11]]}, // sampleName, sampleRnaBam, sampleRnaBamIndex
+    rnaBam, // sampleName, sampleRnaBam, sampleRnaBamIndex
     starIndex,
     annotation_gtf,
     fasta,
@@ -35,11 +34,10 @@ workflow pVacFuseFlow {
     protein_gff
   )
 
+  chFusHlam =  arribaFusion.out.arribaFus.join(hlat) // sampleName, FusionFile, hlaIfile, hlaIIfile
+
   pvacfuseRun(
-    sp.map{it -> it[1]}, 
-    arribaFusion.out.arribaFus,
-    hlaI,
-    hlaII,
+    chFusHlam,  // sampleName, FusionFile, hlaIfile, hlaIIfile
     algos,
     iedbPath
   )

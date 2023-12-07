@@ -11,60 +11,69 @@ include { sortVcf } from '../process/sortVcf'
 workflow vcfAnnotFlow {
 
   take:
-  sp // Channel samplePlan
+  sp // Channel meta,vcf, sampleRnaBam, sampleRnaBamIndex
   vep_dir_cache // Channel path(vep_dir_cache)
   fasta
   fastaIndex 
   fastaDict
   vep_plugin_repo
-  tpmGene
-  tpmTranscript
+  tpm
   vt
+
 
   main:
   chVersions = Channel.empty()
+  chVepVcfTpm = Channel.empty()
+
 
   vepAnnot(
-    sp.map{it -> [it[1],it[7]]}, // sampleName, vcf
+    sp.map { it -> [it[0], [it[1]]]}, // sampleName, vcf
     vep_dir_cache,
     fasta,
     vep_plugin_repo
     )
 
+  chVepVcfTpm = vepAnnot.out.vepVcf.join(tpm)
+/*  chVepVcfTpm.view()
+*/
   vcfAddExp(
-    sp.map{it -> it[1]}, // sampleName
-    vepAnnot.out.vepVcf,
+    chVepVcfTpm
+ /*   tpm
     tpmGene,
-    tpmTranscript
+    tpmTranscript*/
     )
 
-  vcfSplit(
-    sp.map{it -> it[1]}, // sampleName
-    vcfAddExp.out.exprVcf, //  exprVcf
+/*  vcfAddExp.out.exprVcf.view()
+*/  
+  chSpBam = sp.map { it -> [it[0], it[2], it[3]]}
+  chExprVcfRnaBam = vcfAddExp.out.exprVcf.join(chSpBam)
+/*  chExprVcfRnaBam.view()
+*/
+
+ vcfSplit(
+   chExprVcfRnaBam,
     vt,
     fasta,
     fastaIndex,
     fastaDict,
-    sp.map{it -> it[10]},  // sampleRnaBam
-    sp.map{it -> it[11]}  // sampleRnaBamIndex
     )
 
-  vcfAddRnaCov(
-    sp.map{it -> it[1]}, // sampleName
-    vcfSplit.out.splitSnvVcf,
-    vcfSplit.out.splitIndelVcf,
-    vcfSplit.out.splitSnvTxt,
-    vcfSplit.out.splitIndelTxt
+/*  vcfSplit.out.splitVcf.view()
+*/
+   vcfAddRnaCov(
+    vcfSplit.out.splitVcf
     )
 
-  sortVcf(
-    sp.map{it -> it[1]}, // sampleName
+/*  vcfAddRnaCov.out.rnaCovVcf.view()
+*/
+ sortVcf(
     vcfAddRnaCov.out.rnaCovVcf
     )
 
-
-  chVersions = chVersions.mix(vepAnnot.out.versions)
-
+/*  sortVcf.out.sortedVcf.view()
+*/
+ /* chVersions = chVersions.mix(vepAnnot.out.versions)
+*/
   emit:
   vepVcf = vepAnnot.out.vepVcf
   exprVcf = vcfAddExp.out.exprVcf

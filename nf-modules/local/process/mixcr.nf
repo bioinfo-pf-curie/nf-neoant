@@ -3,19 +3,18 @@
  */
 
 process mixcr {
-  tag "${sampleName}"
+  tag "${meta.sampleName}"
   label "mixcr"
   label "medCpu"
   label "medMem"
 
   input:
-  tuple val(sampleName), path(fastqRnaR1), path(fastqRnaR2) 
+  tuple val(meta), path(fastqRnaR1), path(fastqRnaR2) 
   val species // hsa
   val mi_license
 
   output:
-  path("${sampleName}/*clns"), emit: mixcrClns
-  path("${sampleName}/${sampleName}.chainUsage.pdf"), emit: mixcrPdf
+  tuple val(meta), path("${meta.sampleName}/*clns"), path("${meta.sampleName}/${meta.sampleName}.chainUsage.pdf"), emit: mixcrOut
 
   script:
   def args = task.ext.args ?: ''
@@ -28,9 +27,9 @@ process mixcr {
         --threads ${task.cpus} \
         --species ${species} \
         ${fastqRnaR1} ${fastqRnaR2} \
-        ${sampleName}/${sampleName}
+        ${meta.sampleName}/${meta.sampleName}
 
-    mixcr exportQc chainUsage ${sampleName}/*.clns  ${sampleName}/${sampleName}.chainUsage.pdf
+    mixcr exportQc chainUsage ${meta.sampleName}/*.clns  ${meta.sampleName}/${meta.sampleName}.chainUsage.pdf
   
   """
 }

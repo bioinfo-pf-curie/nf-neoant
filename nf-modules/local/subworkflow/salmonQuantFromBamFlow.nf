@@ -8,7 +8,7 @@ include { salmonQuantFromBam } from '../process/salmonQuantFromBam'
 workflow salmonQuantFromBamFlow {
 
   take:
-  sp // Channel samplePlan
+  sp // Channel meta, fastqRnaR1, fastqRnaR2
   trsFasta // Channel path(transcriptsFasta)
   gtf // Channel path(gtf)
   starIndex
@@ -18,7 +18,7 @@ workflow salmonQuantFromBamFlow {
   chVersions = Channel.empty()
 
   starAlign(
-    sp.map{it -> [it[1],it[8],it[9]]}, // sampleName, fastqRnaR1, fastqRnaR2
+    sp,
     starIndex,
     gff
   )
@@ -29,11 +29,10 @@ workflow salmonQuantFromBamFlow {
     gff
   )
 
-  chVersions = chVersions.mix(salmonQuantFromBam.out.versions)
-
+/*  chVersions = chVersions.mix(salmonQuantFromBam.out.versions)
+*/
   emit:
-  tpmGene = salmonQuantFromBam.out.rnaCounts
-  tpmTranscript = salmonQuantFromBam.out.rnaCountsTranscripts
+  tpm = salmonQuantFromBam.out.tpm // Channel [meta], tpmGene, tpmTranscript
 
   versions = chVersions
 }

@@ -3,17 +3,16 @@
  */
 
 process sortVcf {
-  tag "${sampleName}"
+  tag "${meta.sampleName}"
   label 'bcftools'
   label "medCpu"
   label "medMem"
 
   input:
-  val sampleName
-  path annotVcf
+  tuple val(meta), path(annotVcf)
   
   output:
-  path("*.sorted.vcf"), emit: sortedVcf
+  tuple val(meta), path("*.sorted.vcf"), emit: sortedVcf
 
   when:
   task.ext.when == null || task.ext.when

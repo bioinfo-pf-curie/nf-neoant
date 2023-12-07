@@ -86,6 +86,7 @@ workflowSummaryCh = NFTools.summarize(summary, workflow, params)
 // Load raw data
 chRawData = NFTools.getInputData(params.samplePlan)
 //return [sampleId, sampleName , normalName, fastqDnaR1, fastqDnaR2, fastqDnaBam, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, hlaI] 
+//return [meta, fastqDnaR1, fastqDnaR2, fastqDnaBam, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, hlaI] 
 
 // Make samplePlan if not available
 chsPlan = NFTools.getSamplePlan(params.samplePlan)
@@ -178,11 +179,21 @@ workflow {
     // chCountsMqc = Channel.empty()
 
 
+    //[meta], fastqRnaR1, fastqRnaR2
+    chRawData
+      .map{ it ->
+        def meta = [sampleName:it[0].sampleName]
+        return [meta, it[6], it[7] ]
+      }.set{ chPairRnaFastq }
+
+/*
+      chPairRnaFastq.view()*/
+
     //*******************************************
     // Salmon transcript quantification
 
     salmonQuantFromBamFlow (
-          chRawData,
+          chPairRnaFastq,
           chTranscriptsFasta,
           chGtf, 
           chStarIndex,
@@ -191,30 +202,36 @@ workflow {
 
     // chVersions = chVersions.mix(salmonQuantFromBamFlow.out.versions)
 
+     //[meta], vcf
+    chRawData
+      .map{ it ->
+        def meta = [sampleName:it[0].sampleName ]
+        return [meta, it[5], it[8], it[9] ]
+      }.set{ chDnaVcfRnaBam }
+
+ /*     chDnaVcfRnaBam.view()*/
+ 
+/*       * meta.sampleId,meta.sampleName,meta.normalName ,pathToDnaFastqR1,pathToDnaFastqR2,sampleDnaBam,sampleVcf,pathToRnaFastqR1,pathToRnaFastqR2,sampleRnaBam,sampleRnaBamIndex,hlaI"*/
+   
+ 
     //*******************************************
     // Vcf annotation
 
     vcfAnnotFlow (
-          chRawData,
+          chDnaVcfRnaBam,
           chVepCache,
           chFasta,
           chFastaFai,
           chFastaDict,
           chVepPlugin,
-          salmonQuantFromBamFlow.out.tpmGene,
-          salmonQuantFromBamFlow.out.tpmTranscript,
+          salmonQuantFromBamFlow.out.tpm,
           chVtTools
         )
 
     //*******************************************
     // pVacseq
 
-
-    // pVacseqFlow (
-    //       chRawData,
-    //       chGraphDir,
-    //       chGraphName
-    //     )
+    //vcfAnnotFlow.out.annotVcf.view()
 
     pVacseqFlow (
           chRawData,
@@ -231,8 +248,16 @@ workflow {
     //*******************************************
     // pVacFuse
 
+    chRawData
+      .map{ it ->
+        def meta = [sampleName:it[0].sampleName ]
+        return [meta, it[8], it[9] ]
+      }.set{ chRnaBam }
+
+    chHlatm =  pVacseqFlow.out.hlaIfile.join(pVacseqFlow.out.hlaIIfile) // sampleName, hlaIfile, hlaIIfile
+
     pVacFuseFlow (
-          chRawData,
+          chRnaBam, // sampleName, RnaBam, RnaBamIndex
           chStarSibIndex,
           chGtfSib,
           chFastaSib,
@@ -240,8 +265,7 @@ workflow {
           chLayout,
           chBlackList,
           chProteinGff,
-          pVacseqFlow.out.hlaIfile,
-          pVacseqFlow.out.hlaIIfile,
+          chHlatm, // sampleName, hlaIfile, hlaIIfile
           chAlgos,
           chIedbPath
         )
@@ -250,11 +274,11 @@ workflow {
     // mixcr
 
 
-    mixcr(
-      chRawData.map{it -> [it[1],it[8],it[9]]}, // sampleName, fastqRnaR1, fastqRnaR2
-      chSpecies,
-      chMiLicense
-      )
+      mixcr(
+        chPairRnaFastq, // sampleName, fastqRnaR1, fastqRnaR2
+        chSpecies,
+        chMiLicense
+        )
 
 
     // chCounts = salmonQuantFromBamFlow.out.countsGene

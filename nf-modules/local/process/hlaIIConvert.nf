@@ -3,17 +3,16 @@
  */
 
 process hlaIIConvert {
-  tag "${sampleName}"
+  tag "${meta.sampleName}"
   // label 'pvacseq'
   label "minCpu"
   label "lowMem"
 
   input:
-  val sampleName
-  path hlaIIfile //hla/R1_bestguess_G.txt
+  tuple val(meta), path(hlaIIfile) //hla/R1_bestguess_G.txt
 
   output:
-  path("*_mhcII.txt"), emit: hlaII
+  tuple val(meta), path("*_mhcII.txt"), emit: hlaII
 
   when:
   task.ext.when == null || task.ext.when
@@ -23,7 +22,7 @@ process hlaIIConvert {
 
   hlala_types=\$(awk '{if(\$9 ==1 && \$NF ==1 &&  \$3 ~ /^D/) print \$3}' ${hlaIIfile} |uniq | sed "s|....\$||g" | awk 'ORS=","{print \$1}' | sed "s|,\$||g")
 
-  echo \${hlala_types} > ${sampleName}_mhcII.txt
+  echo \${hlala_types} > ${meta.sampleName}_mhcII.txt
 
   """
 }

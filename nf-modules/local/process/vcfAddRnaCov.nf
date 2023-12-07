@@ -3,20 +3,16 @@
  */
 
 process vcfAddRnaCov {
-  tag "${sampleName}"
+  tag "${meta.sampleName}"
   label 'pvacseq'
   label "medCpu"
   label "medMem"
 
   input:
-  val sampleName
-  path splitSnvVcf
-  path splitIndelVcf
-  path splitSnvTxt
-  path splitIndelTxt
+  tuple val(meta), path(splitSnvVcf),path(splitIndelVcf),path(splitSnvTxt),path(splitIndelTxt)
   
   output:
-  path("*vt.annot.vcf"), emit: rnaCovVcf
+  tuple val(meta), path("*vt.annot.vcf"), emit: rnaCovVcf
 
   when:
   task.ext.when == null || task.ext.when
@@ -24,11 +20,11 @@ process vcfAddRnaCov {
   script:
   """
 
-  vcf-readcount-annotator -s ${sampleName} -t snv -o ${sampleName}.vt.snv.rna.vcf ${splitSnvVcf} ${splitSnvTxt}  RNA 
-  vcf-readcount-annotator -s ${sampleName} -t indel -o ${sampleName}.vt.indel.rna.vcf ${splitIndelVcf} ${splitIndelTxt}  RNA 
+  vcf-readcount-annotator -s ${meta.sampleName} -t snv -o ${meta.sampleName}.vt.snv.rna.vcf ${splitSnvVcf} ${splitSnvTxt}  RNA 
+  vcf-readcount-annotator -s ${meta.sampleName} -t indel -o ${meta.sampleName}.vt.indel.rna.vcf ${splitIndelVcf} ${splitIndelTxt}  RNA 
 
-  grep "^#\\|:RAF" ${sampleName}.vt.snv.rna.vcf  > ${sampleName}.vt.annot.vcf 
-  grep ":RAF" ${sampleName}.vt.snv.rna.vcf  >> ${sampleName}.vt.annot.vcf 
+  grep "^#\\|:RAF" ${meta.sampleName}.vt.snv.rna.vcf  > ${meta.sampleName}.vt.annot.vcf 
+  grep ":RAF" ${meta.sampleName}.vt.snv.rna.vcf  >> ${meta.sampleName}.vt.annot.vcf 
 
 
   """

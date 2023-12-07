@@ -13,7 +13,7 @@ workflow pVacseqFlow {
   sp // Channel samplePlan
   graphDir
   graphName
-  annotVcf
+  annotVcf // Channel sampleName, annotVcf
   algos
   minVafDna
   minVafRna
@@ -23,30 +23,48 @@ workflow pVacseqFlow {
   main:
   chVersions = Channel.empty()
 
+  sp.map{ it ->
+        def meta = [sampleName:it[0].sampleName ]
+        return [meta, it[10]]
+      }.set{ chHlaIt }
+
   hlaIConvert(
-    sp.map{it -> it[1]}, // sampleName
-    sp.map{it -> it[12]} // hlaIfile
+    chHlaIt // sampleName, hlaIfile
     )
 
+  sp.map{ it ->
+        def meta = [sampleName:it[0].sampleName ]
+        return [meta, it[3],it[4]]
+      }.set{ chHlaLat }
+  // chHlaLat.view()
+
   hlaLaRun(
-    sp.map{it -> it[1]}, // sampleName
-    sp.map{it -> it[5]}, // sampleDnaBam
-    sp.map{it -> it[6]}, // sampleDnaBamIndex
+    chHlaLat, // sampleName, sampleDnaBam, sampleDnaBamIndex
     graphDir,
     graphName
     )
 
   hlaIIConvert(
-    sp.map{it -> it[1]}, // sampleName
-    hlaLaRun.out.hlaIIfile // hlaIIfile
+    hlaLaRun.out.hlaIIfile // sampleName, hlaIIfile
     )
 
+  //hlaIIConvert.out.hlaII.view()
+
+  chHlat =  hlaIConvert.out.hlaI.join(hlaIIConvert.out.hlaII) // sampleName, hlaIfile, hlaIIfile
+  // chHlat.view()
+
+  // sp.map{ it ->
+  //       def meta = [sampleName:it[0].sampleName, normalName:it[0].normalName ]
+  //       return [meta]
+  //     }.set{ chNormal }
+
+  // chNormal.view()    
+
+  chVcfHlat =  annotVcf.join(chHlat) // sampleName, hlaIfile, hlaIIfile
+  //chVcfHlat.view()
+
   pvacseqRun(
-    sp.map{it -> it[1]}, // sampleName
-    sp.map{it -> it[2]}, // normalName
-    annotVcf,
-    hlaIConvert.out.hlaI,
-    hlaIIConvert.out.hlaII,
+    chVcfHlat, // Channel sampleName, annotVcf , hlaIfile, hlaIIfile
     algos,
     minVafDna,
     minVafRna,

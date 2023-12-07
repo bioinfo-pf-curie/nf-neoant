@@ -3,22 +3,19 @@
  */
 
 process pvacfuseRun {
-  tag "${sampleName}"
+  tag "${meta.sampleName}"
   label 'pvacseq'
   label "medCpu"
   label "medMem"
 
   input:
-  val sampleName
-  path fusionFile //star_arriba.fusions.tsv
-  path hlaI
-  path hlaII
+  tuple val(meta), path(fusionFile), path(hlaI), path(hlaII)
   val algos
   path iedbPath
 
   output:
-  path("${sampleName}/*/*.fa"), emit: pvacFuseFa
-  path("${sampleName}/*/*.tsv"), emit: pvacFuseTsv
+  path("${meta.sampleName}/*/*.fa"), emit: pvacFuseFa
+  path("${meta.sampleName}/*/*.tsv"), emit: pvacFuseTsv
 
   when:
   task.ext.when == null || task.ext.when
@@ -32,10 +29,10 @@ process pvacfuseRun {
 
   pvacfuse run \
         ${fusionFile} \
-        ${sampleName} \
+        ${meta.sampleName} \
         \${hla_types_pvac_total} \
         ${algos} \
-        ${sampleName} \
+        ${meta.sampleName} \
         --class-i-epitope-length 8,9,10,11 \
         --class-ii-epitope-length 12,13,14,15,16,17,18 \
         --top-score-metric lowest \

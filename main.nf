@@ -173,21 +173,13 @@ workflow {
   chVersions = Channel.empty()
 
   main:
-    // Init Channels
-    // chCounts = Channel.empty()
-    // chCountsTpm = Channel.empty()
-    // chCountsMqc = Channel.empty()
 
-
-    //[meta], fastqRnaR1, fastqRnaR2
     chRawData
       .map{ it ->
-        def meta = [sampleName:it[0].sampleName]
+        def meta = [sampleName:it[0].sampleName] //[meta], fastqRnaR1, fastqRnaR2
         return [meta, it[6], it[7] ]
       }.set{ chPairRnaFastq }
-
-/*
-      chPairRnaFastq.view()*/
+    //  chPairRnaFastq.view()
 
     //*******************************************
     // Salmon transcript quantification
@@ -280,39 +272,8 @@ workflow {
         chMiLicense
         )
 
-
-    // chCounts = salmonQuantFromBamFlow.out.countsGene
-    // chCountsTpm = salmonQuantFromBamFlow.out.tpmGene
-    // chCountsMqc = salmonQuantFromBamFlow.out.results
+s
     // chVersions = chVersions.mix(salmonQuantFromBamFlow.out.versions)
 
 
-    //*******************************************
-    // MULTIQC
-  
-    // Warnings that will be printed in the mqc report
-    // warnCh = Channel.empty()
-
-    // if (!params.skipMultiQC){
-
-    //   getSoftwareVersions(
-    //     versionsCh.unique().collectFile()
-    //   )
-
-    //   multiqc(
-    //     customRunName,
-    //     sPlanCh.collect(),
-    //     metadataCh.ifEmpty([]),
-    //     multiqcConfigCh.ifEmpty([]),
-    //     fastqcMqcCh.ifEmpty([]),
-    //     getSoftwareVersions.out.versionsYaml.collect().ifEmpty([]),
-    //     workflowSummaryCh.collectFile(name: "workflow_summary_mqc.yaml"),
-    //     warnCh.collect().ifEmpty([])
-    //   )
-    //   mqcReport = multiqc.out.report.toList()
-    // }
 }
-
-// workflow.onComplete {
-//   NFTools.makeReports(workflow, params, summary, customRunName, mqcReport)
-// }

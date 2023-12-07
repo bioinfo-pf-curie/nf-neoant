@@ -1,5 +1,5 @@
 /* 
- * Transcripts Counts workflow
+ * Gene/Transcripts count workflow
  */
 
 include { starAlign } from '../process/starAlign'
@@ -9,13 +9,12 @@ workflow salmonQuantFromBamFlow {
 
   take:
   sp // Channel meta, fastqRnaR1, fastqRnaR2
-  trsFasta // Channel path(transcriptsFasta)
-  gtf // Channel path(gtf)
+  trsFasta 
+  gtf 
   starIndex
   gff
 
   main:
-  chVersions = Channel.empty()
 
   starAlign(
     sp,
@@ -29,10 +28,7 @@ workflow salmonQuantFromBamFlow {
     gff
   )
 
-/*  chVersions = chVersions.mix(salmonQuantFromBam.out.versions)
-*/
   emit:
   tpm = salmonQuantFromBam.out.tpm // Channel [meta], tpmGene, tpmTranscript
 
-  versions = chVersions
 }

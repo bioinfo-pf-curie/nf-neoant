@@ -380,10 +380,10 @@ Available Profiles
             .fromPath(samplePlan)
             .splitCsv(header: false)
             .map { row ->
-	      // def meta = [:]
-              def sampleId = row[0]
-              def sampleName = row[1]
-              def normalName = row[2]
+	      def meta = [:]
+              meta.sampleId = row[0]
+              meta.sampleName = row[1]
+              meta.normalName = row[2]
               def fastqDnaR1 = row[3]
               def fastqDnaR2 = row[4]
               def sampleDnaBam = row[5]
@@ -394,8 +394,7 @@ Available Profiles
               def sampleRnaBam = row[10]
               def sampleRnaBamIndex = row[11]
               def hlaI = row[12]
-              // def hlaII = row[12]
-              return [sampleId, sampleName , normalName, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex, hlaI] 
+              return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex, hlaI] 
 
             }
         } 

@@ -5,4 +5,3 @@ channels:
   - defaults
 dependencies:
   - bioconda::salmon=1.10.2=hecfa306_0
-  # - conda-forge::tbb=2020.2=hc9558a2_0

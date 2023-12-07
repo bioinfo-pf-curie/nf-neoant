@@ -1,5 +1,5 @@
 /*
- * Salmon quant from BAM file
+ * Salmon quantification from BAM file
  */
 
 process salmonQuantFromBam {
@@ -9,7 +9,7 @@ process salmonQuantFromBam {
   label "medMem"
 
   input:
-  tuple val(meta), path(sampleRnaTranscriptBam) // Channel [meta, [sampleRnaTranscriptBam]]
+  tuple val(meta), path(sampleRnaTranscriptBam) // Channel [meta], sampleRnaTranscriptBam
   path(transcriptsFasta)
   path(gff)
 

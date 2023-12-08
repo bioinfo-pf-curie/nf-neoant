@@ -39,6 +39,14 @@ The objective of the pipeline is to predict tumor-specific neoantigen based on b
 * [pVACfuse](https://pvactools.readthedocs.io/en/latest/pvacfuse.html) was then run on the list of filtered fusions of interest, using both HLA typing files. 
 
 
+#### Workflow
+
+![HLAtyping](docs/images/hla_workflow.jpg)
+![DNAseq](docs/images/dna_workflow.jpg)
+![RNAseq](docs/images/rna_workflow.jpg)
+![Fusion](docs/images/fusion_workflow.jpg)
+
+
 #### Run the pipeline from a sample plan
 
 #### Arguments

@@ -18,12 +18,8 @@ process arribaFusion {
   path blacklist_tsv 
   path protein_gff 
 
-
   output:
   tuple val(meta), path("*_star_arriba.fusions.tsv"), emit: arribaFus
-
-  when:
-  task.ext.when == null || task.ext.when
 
   script:
   """

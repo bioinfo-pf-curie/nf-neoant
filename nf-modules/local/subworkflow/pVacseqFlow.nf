@@ -21,7 +21,6 @@ workflow pVacseqFlow {
   iedbPath 
 
   main:
-  chVersions = Channel.empty()
 
   sp.map{ it ->
         def meta = [sampleName:it[0].sampleName ]
@@ -36,7 +35,6 @@ workflow pVacseqFlow {
         def meta = [sampleName:it[0].sampleName ]
         return [meta, it[3],it[4]]
       }.set{ chHlaLat }
-  // chHlaLat.view()
 
   hlaLaRun(
     chHlaLat, // sampleName, sampleDnaBam, sampleDnaBamIndex
@@ -48,20 +46,9 @@ workflow pVacseqFlow {
     hlaLaRun.out.hlaIIfile // sampleName, hlaIIfile
     )
 
-  //hlaIIConvert.out.hlaII.view()
-
   chHlat =  hlaIConvert.out.hlaI.join(hlaIIConvert.out.hlaII) // sampleName, hlaIfile, hlaIIfile
-  // chHlat.view()
-
-  // sp.map{ it ->
-  //       def meta = [sampleName:it[0].sampleName, normalName:it[0].normalName ]
-  //       return [meta]
-  //     }.set{ chNormal }
-
-  // chNormal.view()    
 
   chVcfHlat =  annotVcf.join(chHlat) // sampleName, hlaIfile, hlaIIfile
-  //chVcfHlat.view()
 
   pvacseqRun(
     chVcfHlat, // Channel sampleName, annotVcf , hlaIfile, hlaIIfile
@@ -71,8 +58,6 @@ workflow pVacseqFlow {
     minVafNormal,
     iedbPath 
     )
-
-  // chVersions = chVersions.mix(salmonQuantFromBam.out.versions)
 
   emit:
   hlaIfile = hlaIConvert.out.hlaI

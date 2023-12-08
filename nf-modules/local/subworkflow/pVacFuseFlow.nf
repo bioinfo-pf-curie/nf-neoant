@@ -21,7 +21,6 @@ workflow pVacFuseFlow {
   iedbPath
 
   main:
-  chVersions = Channel.empty()
 
   arribaFusion(
     rnaBam, // sampleName, sampleRnaBam, sampleRnaBamIndex
@@ -42,11 +41,7 @@ workflow pVacFuseFlow {
     iedbPath
   )
 
-
-  // chVersions = chVersions.mix(salmonQuantFromBam.out.versions)
-
   emit:
   arribaFus = arribaFusion.out.arribaFus
 
-  // versions = chVersions
 }

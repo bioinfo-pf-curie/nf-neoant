@@ -22,12 +22,12 @@ process salmonQuantFromBam {
   """
 
   salmon quant \\
-    --libType=A \\
     --alignments ${sampleRnaTranscriptBam} \\
     --threads ${task.cpus} \\
     --targets ${transcriptsFasta} \\
     --geneMap ${gff} \\
-    ${args} \\
+    --libType=A \\
+    --gencode \\
     --output . \\
     --quiet
 
@@ -37,7 +37,6 @@ process salmonQuantFromBam {
   echo -e "gene\t${meta.sampleName}" > ${meta.sampleName}.rna_counts_tpm.txt
   awk '{OFS="\t"}NR>1{print \$1,int(\$4 + 0.5)}'  quant.genes.sf  >>  ${meta.sampleName}.rna_counts_tpm.txt
   
-
   """
 }
 

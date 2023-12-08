@@ -17,9 +17,6 @@ process pvacfuseRun {
   path("${meta.sampleName}/*/*.fa"), emit: pvacFuseFa
   path("${meta.sampleName}/*/*.tsv"), emit: pvacFuseTsv
 
-  when:
-  task.ext.when == null || task.ext.when
-
   script:
   """
 

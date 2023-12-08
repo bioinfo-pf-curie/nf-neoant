@@ -14,9 +14,6 @@ process vcfAddRnaCov {
   output:
   tuple val(meta), path("*vt.annot.vcf"), emit: rnaCovVcf
 
-  when:
-  task.ext.when == null || task.ext.when
-
   script:
   """
 

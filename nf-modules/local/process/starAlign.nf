@@ -16,9 +16,6 @@ process starAlign {
   output:
   tuple val(meta), path("*Aligned.toTranscriptome.out.bam"), emit: transcriptsBam
 
-  when:
-  task.ext.when == null || task.ext.when
-
   script:
   """
   STAR --genomeDir ${star_index} \

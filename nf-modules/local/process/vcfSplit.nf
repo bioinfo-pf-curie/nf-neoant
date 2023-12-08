@@ -18,10 +18,6 @@ process vcfSplit {
   output:
   tuple val(meta), path("*vt.snv.vcf"),path("*vt.indel.vcf"),path("*vt.readcount.snv.txt"),path("*vt.readcount.indel.txt"), emit: splitVcf
 
-
-  when:
-  task.ext.when == null || task.ext.when
-
   script:
   """
 
@@ -31,7 +27,6 @@ process vcfSplit {
   
   ./${vt} decompose -s ${exprVcf} -o \${prefix}.vt.vcf 
  
-
   # add readcount information 
 
   gatk SelectVariants -R ${fasta} -V \${prefix}.vt.vcf  --select-type-to-include SNP -O \${prefix}.vt.snv.vcf

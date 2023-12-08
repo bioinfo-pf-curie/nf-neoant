@@ -49,12 +49,10 @@ if (params.genomes && params.genome && !params.genomes.containsKey(params.genome
   exit 1, "The provided genome '${params.genome}' is not available in the genomes file. Currently the available genomes are ${params.genomes.keySet().join(", ")}"
 }
 
-
 // Stage config files
 // multiqcConfigCh = Channel.fromPath(params.multiqcConfig)
 outputDocsCh = Channel.fromPath("$projectDir/docs/output.md")
 outputDocsImagesCh = file("$projectDir/docs/images/", checkIfExists: true)
-
 
 
 /*
@@ -66,7 +64,7 @@ outputDocsImagesCh = file("$projectDir/docs/images/", checkIfExists: true)
 summary = [
   'Pipeline Release': workflow.revision ?: null,
   'Run Name': customRunName,
-  // 'Inputs' : params.samplePlan ?: params.reads ?: null,
+  'Inputs' : params.samplePlan ?: null,
   'Genome' : params.genome,
   'Max Resources': "${params.maxMemory} memory, ${params.maxCpus} cpus, ${params.maxTime} time per job",
   'Container': workflow.containerEngine && workflow.container ? "${workflow.containerEngine} - ${workflow.container}" : null,
@@ -85,13 +83,10 @@ workflowSummaryCh = NFTools.summarize(summary, workflow, params)
 
 // Load raw data
 chRawData = NFTools.getInputData(params.samplePlan)
-//return [sampleId, sampleName , normalName, fastqDnaR1, fastqDnaR2, fastqDnaBam, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, hlaI] 
-//return [meta, fastqDnaR1, fastqDnaR2, fastqDnaBam, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, hlaI] 
+//return [sampleId, sampleName , normalName, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex, hlaI] 
+//return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex, hlaI] 
 
-// Make samplePlan if not available
-chsPlan = NFTools.getSamplePlan(params.samplePlan)
-
-params.transcriptsFasta = NFTools.getGenomeAttribute(params, 'transcriptsFasta')
+params.transcriptsFasta  = NFTools.getGenomeAttribute(params, 'transcriptsFasta')
 params.gtf = NFTools.getGenomeAttribute(params, 'gtf')
 params.gtf_sib = NFTools.getGenomeAttribute(params, 'gtf_sib')
 params.gff_sib = NFTools.getGenomeAttribute(params, 'gff_sib')
@@ -103,48 +98,46 @@ params.fastaDict = NFTools.getGenomeAttribute(params, 'fastaDict')
 params.fasta_sib = NFTools.getGenomeAttribute(params, 'fasta_sib')
 params.fastaFai_sib = NFTools.getGenomeAttribute(params, 'fastaFai_sib')
 
-
-
 /*
 ==========================
  BUILD CHANNELS
 ==========================
 */
 
-chStarIndex   = params.star      ? Channel.fromPath(params.star, checkIfExists: true).collect()       : Channel.empty()
-chStarSibIndex   = params.star_sib      ? Channel.fromPath(params.star_sib, checkIfExists: true).collect()       : Channel.empty()
-chGff   = params.gff_sib      ? Channel.fromPath(params.gff_sib, checkIfExists: true).collect()       : Channel.empty()
-chTranscriptsFasta   = params.transcriptsFasta      ? Channel.fromPath(params.transcriptsFasta, checkIfExists: true).collect()       : Channel.empty()
-chGtf                = params.gtf                   ? Channel.fromPath(params.gtf, checkIfExists: true).collect()                    : Channel.empty()
-chGtfSib                = params.gtf_sib                   ? Channel.fromPath(params.gtf_sib, checkIfExists: true).collect()                    : Channel.empty()
+chStarIndex         = params.star      ? Channel.fromPath(params.star, checkIfExists: true).collect()       : Channel.empty()
+chStarSibIndex      = params.star_sib      ? Channel.fromPath(params.star_sib, checkIfExists: true).collect()       : Channel.empty()
+chGff               = params.gff_sib      ? Channel.fromPath(params.gff_sib, checkIfExists: true).collect()       : Channel.empty()
+chTranscriptsFasta  = params.transcriptsFasta      ? Channel.fromPath(params.transcriptsFasta, checkIfExists: true).collect()       : Channel.empty()
+chGtf               = params.gtf                   ? Channel.fromPath(params.gtf, checkIfExists: true).collect()                    : Channel.empty()
+chGtfSib            = params.gtf_sib                   ? Channel.fromPath(params.gtf_sib, checkIfExists: true).collect()                    : Channel.empty()
 
-chFastaSib     = params.fasta_sib      ? Channel.fromPath(params.fasta_sib, checkIfExists: true).collect()       : Channel.empty()
-chFastaSibFai    = params.fastaFai_sib      ? Channel.fromPath(params.fastaFai_sib, checkIfExists: true).collect()       : Channel.empty()
+chFastaSib          = params.fasta_sib      ? Channel.fromPath(params.fasta_sib, checkIfExists: true).collect()       : Channel.empty()
+chFastaSibFai       = params.fastaFai_sib      ? Channel.fromPath(params.fastaFai_sib, checkIfExists: true).collect()       : Channel.empty()
 
-chFasta       = params.fasta      ? Channel.fromPath(params.fasta, checkIfExists: true).collect()       : Channel.empty()
-chFastaFai    = params.fastaFai      ? Channel.fromPath(params.fastaFai, checkIfExists: true).collect()       : Channel.empty()
-chFastaDict   = params.fastaDict      ? Channel.fromPath(params.fastaDict, checkIfExists: true).collect()       : Channel.empty()
-chVepCache    = params.vepDirCache      ? Channel.fromPath(params.vepDirCache, checkIfExists: true).collect()       : Channel.empty()
-chVepPlugin   = params.vepPluginRepo      ? Channel.fromPath(params.vepPluginRepo, checkIfExists: true).collect()       : Channel.empty()
+chFasta             = params.fasta      ? Channel.fromPath(params.fasta, checkIfExists: true).collect()       : Channel.empty()
+chFastaFai          = params.fastaFai      ? Channel.fromPath(params.fastaFai, checkIfExists: true).collect()       : Channel.empty()
+chFastaDict         = params.fastaDict      ? Channel.fromPath(params.fastaDict, checkIfExists: true).collect()       : Channel.empty()
+chVepCache          = params.vepDirCache      ? Channel.fromPath(params.vepDirCache, checkIfExists: true).collect()       : Channel.empty()
+chVepPlugin         = params.vepPluginRepo      ? Channel.fromPath(params.vepPluginRepo, checkIfExists: true).collect()       : Channel.empty()
 
-chGraphDir    = params.graphDir      ? Channel.fromPath(params.graphDir, checkIfExists: true).collect()       : Channel.empty()
-chGraphName   = params.graphName  //    ? Channel.Value(params.graphName, checkIfExists: true).collect()       : Channel.empty()
+chGraphDir          = params.graphDir      ? Channel.fromPath(params.graphDir, checkIfExists: true).collect()       : Channel.empty()
+chGraphName         = params.graphName  //    ? Channel.Value(params.graphName, checkIfExists: true).collect()       : Channel.empty()
 
 
-chBlackList   = params.blackList      ? Channel.fromPath(params.blackList, checkIfExists: true).collect()       : Channel.empty()
-chProteinGff  = params.proteinGff      ? Channel.fromPath(params.proteinGff, checkIfExists: true).collect()       : Channel.empty()
-chLayout      = params.layout
+chBlackList         = params.blackList      ? Channel.fromPath(params.blackList, checkIfExists: true).collect()       : Channel.empty()
+chProteinGff        = params.proteinGff      ? Channel.fromPath(params.proteinGff, checkIfExists: true).collect()       : Channel.empty()
+chLayout            = params.layout
 
-chAlgos       = params.algos     
-chMinVafDna   = params.min_vaf_dna    
-chMinVafRna   = params.min_vaf_rna     
-chMinVafNormal   = params.min_vaf_normal     
-chIedbPath    = params.iedb_path      ? Channel.fromPath(params.iedb_path, checkIfExists: true).collect()       : Channel.empty()
+chAlgos             = params.algos     
+chMinVafDna         = params.min_vaf_dna    
+chMinVafRna         = params.min_vaf_rna     
+chMinVafNormal      = params.min_vaf_normal     
+chIedbPath          = params.iedb_path      ? Channel.fromPath(params.iedb_path, checkIfExists: true).collect()       : Channel.empty()
 
-chVtTools     = params.vtTools      ? Channel.fromPath(params.vtTools, checkIfExists: true).collect()       : Channel.empty()
+chVtTools           = params.vtTools      ? Channel.fromPath(params.vtTools, checkIfExists: true).collect()       : Channel.empty()
 
-chSpecies     = params.species
-chMiLicense     = params.miLicense    
+chSpecies           = params.species
+chMiLicense         = params.miLicense    
 
 /*
 ==================================
@@ -170,7 +163,6 @@ include { mixcr } from './nf-modules/local/process/mixcr'
 */
 
 workflow {
-  chVersions = Channel.empty()
 
   main:
 
@@ -179,7 +171,6 @@ workflow {
         def meta = [sampleName:it[0].sampleName] //[meta], fastqRnaR1, fastqRnaR2
         return [meta, it[6], it[7] ]
       }.set{ chPairRnaFastq }
-    //  chPairRnaFastq.view()
 
     //*******************************************
     // Salmon transcript quantification
@@ -192,19 +183,12 @@ workflow {
           chGff
         )
 
-    // chVersions = chVersions.mix(salmonQuantFromBamFlow.out.versions)
-
-     //[meta], vcf
     chRawData
       .map{ it ->
-        def meta = [sampleName:it[0].sampleName ]
+        def meta = [sampleName:it[0].sampleName ] //[meta], vcf
         return [meta, it[5], it[8], it[9] ]
       }.set{ chDnaVcfRnaBam }
 
- /*     chDnaVcfRnaBam.view()*/
- 
-/*       * meta.sampleId,meta.sampleName,meta.normalName ,pathToDnaFastqR1,pathToDnaFastqR2,sampleDnaBam,sampleVcf,pathToRnaFastqR1,pathToRnaFastqR2,sampleRnaBam,sampleRnaBamIndex,hlaI"*/
-   
  
     //*******************************************
     // Vcf annotation
@@ -222,8 +206,6 @@ workflow {
 
     //*******************************************
     // pVacseq
-
-    //vcfAnnotFlow.out.annotVcf.view()
 
     pVacseqFlow (
           chRawData,
@@ -265,15 +247,10 @@ workflow {
     //*******************************************
     // mixcr
 
-
       mixcr(
         chPairRnaFastq, // sampleName, fastqRnaR1, fastqRnaR2
         chSpecies,
         chMiLicense
         )
-
-s
-    // chVersions = chVersions.mix(salmonQuantFromBamFlow.out.versions)
-
 
 }

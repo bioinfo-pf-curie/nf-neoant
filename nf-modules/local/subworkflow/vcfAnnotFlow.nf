@@ -12,7 +12,7 @@ workflow vcfAnnotFlow {
 
   take:
   sp // Channel meta,vcf, sampleRnaBam, sampleRnaBamIndex
-  vep_dir_cache // Channel path(vep_dir_cache)
+  vep_dir_cache
   fasta
   fastaIndex 
   fastaDict
@@ -20,11 +20,8 @@ workflow vcfAnnotFlow {
   tpm
   vt
 
-
   main:
-  chVersions = Channel.empty()
   chVepVcfTpm = Channel.empty()
-
 
   vepAnnot(
     sp.map { it -> [it[0], [it[1]]]}, // sampleName, vcf
@@ -34,50 +31,32 @@ workflow vcfAnnotFlow {
     )
 
   chVepVcfTpm = vepAnnot.out.vepVcf.join(tpm)
-/*  chVepVcfTpm.view()
-*/
+
   vcfAddExp(
     chVepVcfTpm
- /*   tpm
-    tpmGene,
-    tpmTranscript*/
     )
 
-/*  vcfAddExp.out.exprVcf.view()
-*/  
   chSpBam = sp.map { it -> [it[0], it[2], it[3]]}
   chExprVcfRnaBam = vcfAddExp.out.exprVcf.join(chSpBam)
-/*  chExprVcfRnaBam.view()
-*/
 
- vcfSplit(
-   chExprVcfRnaBam,
+  vcfSplit(
+    chExprVcfRnaBam,
     vt,
     fasta,
     fastaIndex,
     fastaDict,
     )
 
-/*  vcfSplit.out.splitVcf.view()
-*/
-   vcfAddRnaCov(
+  vcfAddRnaCov(
     vcfSplit.out.splitVcf
     )
 
-/*  vcfAddRnaCov.out.rnaCovVcf.view()
-*/
- sortVcf(
+  sortVcf(
     vcfAddRnaCov.out.rnaCovVcf
     )
 
-/*  sortVcf.out.sortedVcf.view()
-*/
- /* chVersions = chVersions.mix(vepAnnot.out.versions)
-*/
   emit:
   vepVcf = vepAnnot.out.vepVcf
   exprVcf = vcfAddExp.out.exprVcf
   annotVcf = sortVcf.out.sortedVcf
-  
-  versions = chVersions
 }

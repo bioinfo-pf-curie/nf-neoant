@@ -401,24 +401,6 @@ Available Profiles
       }
 
 
-      /**
-       * Channeling the samplePlan and create a file is no samplePlan is provided
-       * 
-       * @param samplePlan
-       * @param reads
-       * @param readPaths
-       * @param singleEnd
-       
-       * @return
-       */
-
-      public static Object getSamplePlan(samplePlan) {
-        if (samplePlan){
-	  return Channel.fromPath(samplePlan)
-	}
-  }
-
-
    /************************************
     *
     * Workflow on complete

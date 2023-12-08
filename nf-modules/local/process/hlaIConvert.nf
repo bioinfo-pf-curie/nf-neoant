@@ -4,7 +4,6 @@
 
 process hlaIConvert {
   tag "${meta.sampleName}"
-  // label 'pvacseq'
   label "minCpu"
   label "lowMem"
 
@@ -13,9 +12,6 @@ process hlaIConvert {
 
   output:
   tuple val(meta), path("*_mhcI.txt"), emit: hlaI
-
-  when:
-  task.ext.when == null || task.ext.when
 
   script:
   """

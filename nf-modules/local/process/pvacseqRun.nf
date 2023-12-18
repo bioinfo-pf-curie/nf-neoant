@@ -14,6 +14,8 @@ process pvacseqRun {
   val minVafDna
   val minVafRna
   val minVafNormal
+  val minCovDna
+  val minCovRna
   path iedbPath
 
   output:
@@ -23,6 +25,8 @@ process pvacseqRun {
   tuple val(meta), path("${meta.sampleName}/*/*.json"), emit: pvacSeqJson
 
   script:
+  def args = task.ext.args ?: ''
+
   """
   hlaIt=\$(cat ${hlaI})
   hlaIIt=\$(cat ${hlaII})
@@ -30,7 +34,7 @@ process pvacseqRun {
 
   echo \${hla_types_pvac_total} > ${meta.sampleName}_hlatypes.txt
 
-  normalId=\$(grep "normal_sample"  ${rnaCovVcf} | cut -f2 -d"=")
+  normalId=\$(zgrep "normal_sample"  ${rnaCovVcf} | cut -f2 -d"=")
 
   pvacseq run \
             ${rnaCovVcf} \
@@ -39,31 +43,15 @@ process pvacseqRun {
             ${algos} \
             ${meta.sampleName} \
             --n-threads ${task.cpus} \
-            --class-i-epitope-length 8,9,10,11 \
-            --class-ii-epitope-length 12,13,14,15,16,17,18 \
             --tdna-vaf ${minVafDna} \
             --trna-vaf ${minVafRna} \
-            --top-score-metric lowest \
-            --downstream-sequence-length full \
-            --keep-tmp-files \
-            --fasta-size 200 \
             --normal-sample-name \${normalId} \
-            --binding-threshold 500 \
-            --expn-val 1.0 \
-            --maximum-transcript-support-level 1 \
-            --minimum-fold-change 0.0 \
-            --normal-cov 10 \
-            --tdna-cov 10 \
-            --trna-cov 10 \
             --normal-vaf ${minVafNormal} \
             --iedb-install-directory ${iedbPath} \
-            --iedb-retries 5 \
-            --allele-specific-anchors \
-            --anchor-contribution-threshold 0.8 \
-            --aggregate-inclusion-binding-threshold 5000 \
-            --net-chop-method cterm \
-            --netmhc-stab \
-            --net-chop-threshold 0.5
+            --tdna-cov ${minCovDna} \
+            --trna-cov ${minCovRna} \
+            ${args}
+
 
   """
 }

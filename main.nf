@@ -123,7 +123,6 @@ chVepPlugin         = params.vepPluginRepo      ? Channel.fromPath(params.vepPlu
 chGraphDir          = params.graphDir      ? Channel.fromPath(params.graphDir, checkIfExists: true).collect()       : Channel.empty()
 chGraphName         = params.graphName  //    ? Channel.Value(params.graphName, checkIfExists: true).collect()       : Channel.empty()
 
-
 chBlackList         = params.blackList      ? Channel.fromPath(params.blackList, checkIfExists: true).collect()       : Channel.empty()
 chProteinGff        = params.proteinGff      ? Channel.fromPath(params.proteinGff, checkIfExists: true).collect()       : Channel.empty()
 chLayout            = params.layout
@@ -131,7 +130,9 @@ chLayout            = params.layout
 chAlgos             = params.algos     
 chMinVafDna         = params.min_vaf_dna    
 chMinVafRna         = params.min_vaf_rna     
-chMinVafNormal      = params.min_vaf_normal     
+chMinVafNormal      = params.min_vaf_normal    
+chMinCovDna         = params.min_cov_dna  
+chMinCovRna         = params.min_cov_rna   
 chIedbPath          = params.iedb_path      ? Channel.fromPath(params.iedb_path, checkIfExists: true).collect()       : Channel.empty()
 
 chVtTools           = params.vtTools      ? Channel.fromPath(params.vtTools, checkIfExists: true).collect()       : Channel.empty()
@@ -216,6 +217,8 @@ workflow {
           chMinVafDna,
           chMinVafRna,
           chMinVafNormal,
+          chMinCovDna,
+          chMinCovRna,
           chIedbPath 
         )
 
@@ -228,7 +231,9 @@ workflow {
         return [meta, it[8], it[9] ]
       }.set{ chRnaBam }
 
-    chHlatm =  pVacseqFlow.out.hlaIfile.join(pVacseqFlow.out.hlaIIfile) // sampleName, hlaIfile, hlaIIfile
+//    chHlatm =  pVacseqFlow.out.hlaIfile.join(pVacseqFlow.out.hlaIIfile) // sampleName, hlaIfile, hlaIIfile
+    chHlatm =  pVacseqFlow.out.hlafile // sampleName, hlaIfile, hlaIIfile
+
 
     pVacFuseFlow (
           chRnaBam, // sampleName, RnaBam, RnaBamIndex

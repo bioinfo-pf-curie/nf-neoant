@@ -13,10 +13,12 @@ It supports [conda](https://docs.conda.io) package manager and  [singularity](ht
 ## Pipeline summary
 
 The objective of the pipeline is to predict tumor-specific neoantigen based on both DNA and RNA next generation sequencing data from patients.
-
+<!-- 
 * HLA typing are divided into two parts:
 	- [Optitype](https://github.com/FRED-2/OptiType) (v1.3.5) for MHCI, based on the [nf-core hlatyping pipeline](https://nf-co.re/hlatyping/2.0.0)
 	- [HLA-LA](https://github.com/DiltheyLab/HLA-LA) (v1.0.3) for MHCII
+ -->
+* HLA typing is performed by [seq2HLA](https://github.com/TRON-Bioinformatics/seq2HLA) (v2.3) on both MHCI and MHCII, based on the paired RNA fast files.
 
 * Detection of neoantigen is performed by the [pVACtools suite](https://pvactools.readthedocs.io) (v4.0.6). The pipeline is divided into two parts, one focusing on DNA-based analysis (pVACseq) and the other one based on fusions events derived from RNAseq data (pVACfuse).
 

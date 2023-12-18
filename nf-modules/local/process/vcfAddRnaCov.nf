@@ -21,7 +21,7 @@ process vcfAddRnaCov {
   vcf-readcount-annotator -s ${meta.sampleName} -t indel -o ${meta.sampleName}.vt.indel.rna.vcf ${splitIndelVcf} ${splitIndelTxt}  RNA 
 
   grep "^#\\|:RAF" ${meta.sampleName}.vt.snv.rna.vcf  > ${meta.sampleName}.vt.annot.vcf 
-  grep ":RAF" ${meta.sampleName}.vt.snv.rna.vcf  >> ${meta.sampleName}.vt.annot.vcf 
+  grep ":RAF" ${meta.sampleName}.vt.indel.rna.vcf  >> ${meta.sampleName}.vt.annot.vcf 
 
 
   """

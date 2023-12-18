@@ -34,6 +34,7 @@ workflow pVacFuseFlow {
   )
 
   chFusHlam =  arribaFusion.out.arribaFus.join(hlat) // sampleName, FusionFile, hlaIfile, hlaIIfile
+  
 
   pvacfuseRun(
     chFusHlam,  // sampleName, FusionFile, hlaIfile, hlaIIfile

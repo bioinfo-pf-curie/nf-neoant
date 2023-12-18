@@ -5,4 +5,4 @@ channels:
   - defaults
   - default
 dependencies:
-  - mixcr
+  - mixcr=4.5.0=0

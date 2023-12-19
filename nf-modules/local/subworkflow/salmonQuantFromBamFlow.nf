@@ -10,7 +10,6 @@ workflow salmonQuantFromBamFlow {
   take:
   sp // Channel meta, fastqRnaR1, fastqRnaR2
   trsFasta 
-  gtf 
   starIndex
   gff
 

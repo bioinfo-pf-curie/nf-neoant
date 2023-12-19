@@ -86,17 +86,19 @@ chRawData = NFTools.getInputData(params.samplePlan)
 //return [sampleId, sampleName , normalName, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex, hlaI] 
 //return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex, hlaI] 
 
-params.transcriptsFasta  = NFTools.getGenomeAttribute(params, 'transcriptsFasta')
-params.gtf = NFTools.getGenomeAttribute(params, 'gtf')
-params.gtf_sib = NFTools.getGenomeAttribute(params, 'gtf_sib')
-params.gff_sib = NFTools.getGenomeAttribute(params, 'gff_sib')
-params.star = NFTools.getGenomeAttribute(params, 'star')
-params.star_sib = NFTools.getGenomeAttribute(params, 'star_sib')
+
 params.fasta = NFTools.getGenomeAttribute(params, 'fasta')
 params.fastaFai = NFTools.getGenomeAttribute(params, 'fastaFai')
 params.fastaDict = NFTools.getGenomeAttribute(params, 'fastaDict')
+params.star = NFTools.getGenomeAttribute(params, 'star')
+params.gff = NFTools.getGenomeAttribute(params, 'gff')
+params.transcriptsFasta  = NFTools.getGenomeAttribute(params, 'transcriptsFasta')
 params.fasta_sib = NFTools.getGenomeAttribute(params, 'fasta_sib')
 params.fastaFai_sib = NFTools.getGenomeAttribute(params, 'fastaFai_sib')
+params.star_sib = NFTools.getGenomeAttribute(params, 'star_sib')
+params.gtf_sib = NFTools.getGenomeAttribute(params, 'gtf_sib')
+params.proteinGff = NFTools.getGenomeAttribute(params, 'proteinGff')
+params.blackList = NFTools.getGenomeAttribute(params, 'blackList')
 
 /*
 ==========================
@@ -104,27 +106,27 @@ params.fastaFai_sib = NFTools.getGenomeAttribute(params, 'fastaFai_sib')
 ==========================
 */
 
-chStarIndex         = params.star      ? Channel.fromPath(params.star, checkIfExists: true).collect()       : Channel.empty()
-chStarSibIndex      = params.star_sib      ? Channel.fromPath(params.star_sib, checkIfExists: true).collect()       : Channel.empty()
-chGff               = params.gff_sib      ? Channel.fromPath(params.gff_sib, checkIfExists: true).collect()       : Channel.empty()
-chTranscriptsFasta  = params.transcriptsFasta      ? Channel.fromPath(params.transcriptsFasta, checkIfExists: true).collect()       : Channel.empty()
-chGtf               = params.gtf                   ? Channel.fromPath(params.gtf, checkIfExists: true).collect()                    : Channel.empty()
-chGtfSib            = params.gtf_sib                   ? Channel.fromPath(params.gtf_sib, checkIfExists: true).collect()                    : Channel.empty()
-
-chFastaSib          = params.fasta_sib      ? Channel.fromPath(params.fasta_sib, checkIfExists: true).collect()       : Channel.empty()
-chFastaSibFai       = params.fastaFai_sib      ? Channel.fromPath(params.fastaFai_sib, checkIfExists: true).collect()       : Channel.empty()
-
 chFasta             = params.fasta      ? Channel.fromPath(params.fasta, checkIfExists: true).collect()       : Channel.empty()
 chFastaFai          = params.fastaFai      ? Channel.fromPath(params.fastaFai, checkIfExists: true).collect()       : Channel.empty()
 chFastaDict         = params.fastaDict      ? Channel.fromPath(params.fastaDict, checkIfExists: true).collect()       : Channel.empty()
+chStarIndex         = params.star      ? Channel.fromPath(params.star, checkIfExists: true).collect()       : Channel.empty()
+chGff               = params.gff      ? Channel.fromPath(params.gff, checkIfExists: true).collect()       : Channel.empty()
+chTranscriptsFasta  = params.transcriptsFasta      ? Channel.fromPath(params.transcriptsFasta, checkIfExists: true).collect()       : Channel.empty()
+chFastaSib          = params.fasta_sib      ? Channel.fromPath(params.fasta_sib, checkIfExists: true).collect()       : Channel.empty()
+chFastaSibFai       = params.fastaFai_sib      ? Channel.fromPath(params.fastaFai_sib, checkIfExists: true).collect()       : Channel.empty()
+chStarSibIndex      = params.star_sib      ? Channel.fromPath(params.star_sib, checkIfExists: true).collect()       : Channel.empty()
+chGtfSib            = params.gtf_sib                   ? Channel.fromPath(params.gtf_sib, checkIfExists: true).collect()                    : Channel.empty()
+chProteinGff        = params.proteinGff      ? Channel.fromPath(params.proteinGff, checkIfExists: true).collect()       : Channel.empty()
+chBlackList         = params.blackList                   ? Channel.fromPath(params.blackList, checkIfExists: true).collect()                    : Channel.empty()
+
+// chGtf               = params.gtf                   ? Channel.fromPath(params.gtf, checkIfExists: true).collect()                    : Channel.empty()
+
 chVepCache          = params.vepDirCache      ? Channel.fromPath(params.vepDirCache, checkIfExists: true).collect()       : Channel.empty()
 chVepPlugin         = params.vepPluginRepo      ? Channel.fromPath(params.vepPluginRepo, checkIfExists: true).collect()       : Channel.empty()
 
 chGraphDir          = params.graphDir      ? Channel.fromPath(params.graphDir, checkIfExists: true).collect()       : Channel.empty()
 chGraphName         = params.graphName  //    ? Channel.Value(params.graphName, checkIfExists: true).collect()       : Channel.empty()
 
-chBlackList         = params.blackList      ? Channel.fromPath(params.blackList, checkIfExists: true).collect()       : Channel.empty()
-chProteinGff        = params.proteinGff      ? Channel.fromPath(params.proteinGff, checkIfExists: true).collect()       : Channel.empty()
 chLayout            = params.layout
 
 chAlgos             = params.algos     
@@ -133,6 +135,7 @@ chMinVafRna         = params.min_vaf_rna
 chMinVafNormal      = params.min_vaf_normal    
 chMinCovDna         = params.min_cov_dna  
 chMinCovRna         = params.min_cov_rna   
+
 chIedbPath          = params.iedb_path      ? Channel.fromPath(params.iedb_path, checkIfExists: true).collect()       : Channel.empty()
 
 chVtTools           = params.vtTools      ? Channel.fromPath(params.vtTools, checkIfExists: true).collect()       : Channel.empty()
@@ -179,7 +182,6 @@ workflow {
     salmonQuantFromBamFlow (
           chPairRnaFastq,
           chTranscriptsFasta,
-          chGtf, 
           chStarIndex,
           chGff
         )

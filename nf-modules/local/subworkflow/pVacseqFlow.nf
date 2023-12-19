@@ -2,9 +2,9 @@
  * pVacseq workflow
  */
 
-include { hlaIConvert } from '../process/hlaIConvert'
-include { hlaLaRun } from '../process/hlaLaRun'
-include { hlaIIConvert } from '../process/hlaIIConvert'
+// include { hlaIConvert } from '../process/hlaIConvert'
+// include { hlaLaRun } from '../process/hlaLaRun'
+// include { hlaIIConvert } from '../process/hlaIIConvert'
 include { pvacseqRun } from '../process/pvacseqRun'
 include { seq2HLA } from '../process/seq2HLA'
 

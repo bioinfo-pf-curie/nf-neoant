@@ -32,7 +32,9 @@ process pvacseqRun {
   hlaIIt=\$(cat ${hlaII})
   hla_types_pvac_total=\$(echo \${hlaIt},\${hlaIIt} | sed "s|,\$||g") 
 
-  echo \${hla_types_pvac_total} > ${meta.sampleName}_hlatypes.txt
+  mkdir -p ${meta.sampleName}
+
+  echo \${hla_types_pvac_total} > ${meta.sampleName}/${meta.sampleName}_hlatypes.txt
 
   normalId=\$(zgrep "normal_sample"  ${rnaCovVcf} | cut -f2 -d"=")
 

@@ -15,8 +15,8 @@ It supports [conda](https://docs.conda.io) package manager and  [singularity](ht
 The objective of the pipeline is to predict tumor-specific neoantigen based on both DNA and RNA next generation sequencing data from patients.
 <!-- 
 * HLA typing are divided into two parts:
-	- [Optitype](https://github.com/FRED-2/OptiType) (v1.3.5) for MHCI, based on the [nf-core hlatyping pipeline](https://nf-co.re/hlatyping/2.0.0)
-	- [HLA-LA](https://github.com/DiltheyLab/HLA-LA) (v1.0.3) for MHCII
+    - [Optitype](https://github.com/FRED-2/OptiType) (v1.3.5) for MHCI, based on the [nf-core hlatyping pipeline](https://nf-co.re/hlatyping/2.0.0)
+    - [HLA-LA](https://github.com/DiltheyLab/HLA-LA) (v1.0.3) for MHCII
  -->
 * HLA typing is performed by [seq2HLA](https://github.com/TRON-Bioinformatics/seq2HLA) (v2.3) on both MHCI and MHCII, based on the paired RNA fast files.
 
@@ -29,9 +29,9 @@ The objective of the pipeline is to predict tumor-specific neoantigen based on b
 * Paired RNAseq reads are aligned using [STAR](https://github.com/alexdobin/STAR) (v2.7.6a) on the STAR index using the --quantMode TranscriptomeSAM option to obtain a transcriptome-based alignments BAM file. Per gene and per transcript TPM (transcript per million) are then estimated using [Salmon](https://github.com/COMBINE-lab/salmon) (v.10.2) with the adequate Gencode GFF3 and transcripts fasta files.
 
 * Small somatic variants (snvs, indels) were first called using the [GATK](https://gatk.broadinstitute.org/hc/en-us) Mutect2 (v4.1.8.0). 
-	- Variants were annotated using [VEP](http://useast.ensembl.org/info/docs/tools/vep/script/index.html) (ENSEMBL v110.1).
-	- Both gene (GX) and transcript (TX) expressions were then added using [vatools](https://github.com/griffithlab/VAtools) (5.1.0) and previously computed expression files
-	- RNA depth (RDP) and RNA allelic ratio (RAF) were then added a combination of [vt](https://github.com/atks/vt) (v0.5), GATK SelectVariants and [bam-readcount](https://github.com/genome/bam-readcount) (v0.8).
+    - Variants were annotated using [VEP](http://useast.ensembl.org/info/docs/tools/vep/script/index.html) (ENSEMBL v110.1).
+    - Both gene (GX) and transcript (TX) expressions were then added using [vatools](https://github.com/griffithlab/VAtools) (5.1.0) and previously computed expression files
+    - RNA depth (RDP) and RNA allelic ratio (RAF) were then added a combination of [vt](https://github.com/atks/vt) (v0.5), GATK SelectVariants and [bam-readcount](https://github.com/genome/bam-readcount) (v0.8).
 
 * [pVACseq](https://pvactools.readthedocs.io/en/latest/pvacseq.html) was then run using HLA typing files (for MHCI & MHCII) on the resulting variant file.
 
@@ -79,10 +79,10 @@ The objective of the pipeline is to predict tumor-specific neoantigen based on b
 ```bash
 
 nextflow run main.nf --samplePlan ${sample_plan} \
-					 --genome ${assembly} \
-					 --genomeAnnotationPath ${genomePath} \
-					 --outDir ${outputDir} \
-					 --condaCacheDir ${condaDir} \
+                     --genome ${assembly} \
+                     --genomeAnnotationPath ${genomePath} \
+                     --outDir ${outputDir} \
+                     --condaCacheDir ${condaDir} \
                      --vepDirCache ${vep_dir_cache} \
                      --vepPluginRepo ${vep_plugin_repo} \
                      --vtTools ${vt} \

@@ -9,5 +9,4 @@ dependencies:
   - pip : 
     - pvactools==4.0.6
     - vatools==5.1.0
-    # - mhcnuggets
 

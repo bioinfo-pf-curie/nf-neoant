@@ -81,9 +81,4 @@ workflow pVacseqFlow {
 
   emit:
   hlafile = seq2HLA.out.hla
-  // hlaIfile = hlaI
-  // hlaIIfile = hlaII  
-  // hlafile = seq2HLA.out.hla
-  // hlaIfile = hlaIConvert.out.hlaI
-  // hlaIIfile = hlaIIConvert.out.hlaII
 }

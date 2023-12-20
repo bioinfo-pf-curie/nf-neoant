@@ -393,8 +393,7 @@ Available Profiles
               def fastqRnaR2 = row[9]
               def sampleRnaBam = row[10]
               def sampleRnaBamIndex = row[11]
-              def hlaI = row[12]
-              return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex, hlaI] 
+              return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex] 
 
             }
         } 

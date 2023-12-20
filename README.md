@@ -51,13 +51,12 @@ The objective of the pipeline is to predict tumor-specific neoantigen based on b
 
 #### Run the pipeline from a sample plan
 
-#### Arguments
+#### Arguments & Parameters
 
 - sample_plan: csv file containing per-row samples information
 
 - assembly: the genome assembly for the analysis (example: hg38)
 - genomePath: path containing the different files described in "conf/genomes.config"
-- genomeSibPath: path containing the different files described in "conf/genomes.config"
 
 - condaCacheDir: path to store conda environments
 
@@ -82,7 +81,6 @@ The objective of the pipeline is to predict tumor-specific neoantigen based on b
 nextflow run main.nf --samplePlan ${sample_plan} \
 					 --genome ${assembly} \
 					 --genomeAnnotationPath ${genomePath} \
-					 --genomeAnnotationSibPath ${genomeSibPath}	\
 					 --outDir ${outputDir} \
 					 --condaCacheDir ${condaDir} \
                      --vepDirCache ${vep_dir_cache} \
@@ -90,8 +88,6 @@ nextflow run main.nf --samplePlan ${sample_plan} \
                      --vtTools ${vt} \
                      --graphDir ${graph_dir} \
                      --graphName ${graph_name} \
-                     --blackList ${blacklist_tsv} \
-                     --proteinGff ${protein_gff} \
                      --iedb_path ${iedb_path} \
                      --miLicense ${mi_license} \
                      -profile multiconda,cluster \
@@ -105,7 +101,7 @@ A sample plan is a csv file (comma separated) that lists all the samples with a 
 The sample plan is expected to contain the following fields (with no header):
 
 ```
-sampleID, sampleName, normalName, path_to_fastqDnaR1, path_to_fastqDnaR2, path_to_sampleDnaBam, path_to_sampleDnaBamIndex, path_to_vcf,  path_to_fastqRnaR1, path_to_fastqRnaR2, path_to_sampleRnaBam, path_to_sampleRnaBamIndex, path_to_hlaI_file
+sampleID, sampleName, normalName, path_to_fastqDnaR1, path_to_fastqDnaR2, path_to_sampleDnaBam, path_to_sampleDnaBamIndex, path_to_vcf,  path_to_fastqRnaR1, path_to_fastqRnaR2, path_to_sampleRnaBam, path_to_sampleRnaBamIndex
 ```
 
 ## Credits

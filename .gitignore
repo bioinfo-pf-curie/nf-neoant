@@ -3,3 +3,5 @@
 /*.log
 /.nextflow/
 /ref/*
+/pvacview/*
+/test/*

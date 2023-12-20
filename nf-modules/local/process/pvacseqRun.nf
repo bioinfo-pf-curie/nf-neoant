@@ -19,7 +19,7 @@ process pvacseqRun {
   path iedbPath
 
   output:
-  tuple val(meta), path("*hlatypes.txt"), emit: hlaAll
+  // tuple val(meta), path("*hlatypes.txt"), emit: hlaAll
   tuple val(meta), path("${meta.sampleName}/*/*.fa"), emit: pvacSeqFa
   tuple val(meta), path("${meta.sampleName}/*/*.tsv"), emit: pvacSeqTsv
   tuple val(meta), path("${meta.sampleName}/*/*.json"), emit: pvacSeqJson

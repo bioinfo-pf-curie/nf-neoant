@@ -15,6 +15,8 @@ process mixcr {
 
   output:
   tuple val(meta), path("${meta.sampleName}/*clns"), path("${meta.sampleName}/${meta.sampleName}.chainUsage.pdf"), emit: mixcrOut
+  path("${meta.sampleName}/*.align.report.txt"), emit: mixcrTxtOut
+  path("${meta.sampleName}/*.tsv"), emit: mixcrTsvOut
 
   """
 

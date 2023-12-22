@@ -83,8 +83,8 @@ workflowSummaryCh = NFTools.summarize(summary, workflow, params)
 
 // Load raw data
 chRawData = NFTools.getInputData(params.samplePlan)
-//return [sampleId, sampleName , normalName, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex, hlaI] 
-//return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex, hlaI] 
+//return [sampleId, sampleName , normalName, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex] 
+//return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex] 
 
 
 params.fasta = NFTools.getGenomeAttribute(params, 'fasta')

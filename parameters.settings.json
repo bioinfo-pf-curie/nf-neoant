@@ -57,20 +57,6 @@
     },
 
     {
-      "name": "genomeAnnotationSibPath",
-      "label": "Annotation path",
-      "usage": "Path to genome annotations folder",
-      "type": "path",
-      "choices": [],
-      "nargs": "+",
-      "default_value": null,
-      "pattern": ".*\\*.*",
-      "render": "textfield",
-      "arity": 0,
-      "group": "References"
-    },
-
-    {
       "name": "outDir",
       "label": "Output directory",
       "usage": "The output directory where the results will be saved",

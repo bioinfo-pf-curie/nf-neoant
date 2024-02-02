@@ -108,7 +108,7 @@ sampleID, sampleName, normalName, path_to_fastqDnaR1, path_to_fastqDnaR2, path_t
 ### Steps
 
 Basic steps are the following: HLAtyping, RNAquant, pVacseq, pVacfuse, mixcr.
-They can be use separately (e.g.: --step HLAtyping or --step RNAquant or --step mixcr) or combined partially (e.g.: --step HLAtyping,RNAquant,pVacseq ;  --step HLAtyping,pVacfuse) or all together (--step HLAtyping, RNAquant, pVacseq, pVacfuse, mixcr) using the --step option. 
+They can be use separately (e.g.: --step HLAtyping or --step RNAquant or --step mixcr) or combined partially (e.g.: --step HLAtyping,RNAquant,pVacseq ;  --step HLAtyping,pVacfuse) or all together (default mode ; --step HLAtyping, RNAquant, pVacseq, pVacfuse, mixcr) using the --step option. 
 
 #### HLA typing
 

@@ -87,6 +87,9 @@ chRawData = NFTools.getInputData(params.samplePlan)
 //return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex] 
 
 
+step = params.step ? params.step.split(',').collect{it.trim()} : []
+
+
 params.fasta = NFTools.getGenomeAttribute(params, 'fasta')
 params.fastaFai = NFTools.getGenomeAttribute(params, 'fastaFai')
 params.fastaDict = NFTools.getGenomeAttribute(params, 'fastaDict')
@@ -159,6 +162,7 @@ include { pVacFuseFlow } from './nf-modules/local/subworkflow/pVacFuseFlow'
 include { getSoftwareVersions } from './nf-modules/common/process/getSoftwareVersions'
 include { outputDocumentation } from './nf-modules/common/process/outputDocumentation'
 include { mixcr } from './nf-modules/local/process/mixcr'
+include { seq2HLA } from './nf-modules/local/process/seq2HLA'
 
 /*
 =====================================
@@ -176,88 +180,130 @@ workflow {
         return [meta, it[6], it[7] ]
       }.set{ chPairRnaFastq }
 
+
+
     //*******************************************
     // Salmon transcript quantification
 
-    salmonQuantFromBamFlow (
-          chPairRnaFastq,
-          chTranscriptsFasta,
-          chStarIndex,
-          chGff
+    if (('RNAquant' in step)){
+        salmonQuantFromBamFlow (
+              chPairRnaFastq,
+              chTranscriptsFasta,
+              chStarIndex,
+              chGff
+            )
+
+        chRNAtm =  salmonQuantFromBamFlow.out.tpm // [meta], tpmGene, tpmTranscript
+      }else{
+        chRawData
+          .map{ it ->
+              def meta = [sampleName:it[0].sampleName ]
+              return [meta, it[12],it[13]] // [meta], tpmGene, tpmTranscript
+            }.set{ chRNAtm }
+        }
+
+    if (('pVacseq' in step)){
+      chRawData
+        .map{ it ->
+          def meta = [sampleName:it[0].sampleName ] //[meta], vcf
+          return [meta, it[5], it[8], it[9] ]
+        }.set{ chDnaVcfRnaBam }
+
+   
+      //*******************************************
+      // Vcf annotation
+
+      vcfAnnotFlow (
+            chDnaVcfRnaBam,
+            chVepCache,
+            chFasta,
+            chFastaFai,
+            chFastaDict,
+            chVepPlugin,
+            chRNAtm,
+            chVtTools
         )
+    }
 
-    chRawData
-      .map{ it ->
-        def meta = [sampleName:it[0].sampleName ] //[meta], vcf
-        return [meta, it[5], it[8], it[9] ]
-      }.set{ chDnaVcfRnaBam }
-
- 
     //*******************************************
-    // Vcf annotation
+    // HLA typing
+    if (('HLAtyping' in step)){
 
-    vcfAnnotFlow (
-          chDnaVcfRnaBam,
-          chVepCache,
-          chFasta,
-          chFastaFai,
-          chFastaDict,
-          chVepPlugin,
-          salmonQuantFromBamFlow.out.tpm,
-          chVtTools
+     chRawData
+        .map{ it ->
+            def meta = [sampleName:it[0].sampleName ]
+            return [meta, it[6],it[7]] // sampleName, RNA Fastq1, RNA Fastq2
+          }.set{ chRNAFastqt } 
+
+      seq2HLA(
+        chRNAFastqt // sampleName, RNA Fastq1, RNA Fastq2
         )
+
+       chHlatm =  seq2HLA.out.hla // sampleName, hlaIfile, hlaIIfile
+      // chVcfHlat =  annotVcf.join(seq2HLA.out.hla) // sampleName, annotVcf, hlaIfile, hlaIIfile
+   } else {
+      chRawData
+        .map{ it ->
+            def meta = [sampleName:it[0].sampleName ]
+            return [meta, it[10],it[11]] // sampleName, hlaIfile, hlaIIfile
+          }.set{ chHlatm }
+   }
 
     //*******************************************
     // pVacseq
-
-    pVacseqFlow (
-          chRawData,
-          chGraphDir,
-          chGraphName,
-          vcfAnnotFlow.out.annotVcf,
-          chAlgos,
-          chMinVafDna,
-          chMinVafRna,
-          chMinVafNormal,
-          chMinCovDna,
-          chMinCovRna,
-          chIedbPath 
-        )
+    if (('pVacseq' in step)){
+      pVacseqFlow (
+            // chRawData,
+            // chGraphDir,
+            // chGraphName,
+            chHlatm,
+            vcfAnnotFlow.out.annotVcf,
+            chAlgos,
+            chMinVafDna,
+            chMinVafRna,
+            chMinVafNormal,
+            chMinCovDna,
+            chMinCovRna,
+            chIedbPath 
+          )
+  }
 
     //*******************************************
     // pVacFuse
+  if (('pVacfuse' in step)){
+      chRawData
+        .map{ it ->
+          def meta = [sampleName:it[0].sampleName ]
+          return [meta, it[8], it[9] ]
+        }.set{ chRnaBam }
 
-    chRawData
-      .map{ it ->
-        def meta = [sampleName:it[0].sampleName ]
-        return [meta, it[8], it[9] ]
-      }.set{ chRnaBam }
+  //    chHlatm =  pVacseqFlow.out.hlaIfile.join(pVacseqFlow.out.hlaIIfile) // sampleName, hlaIfile, hlaIIfile
+      // chHlatm =  pVacseqFlow.out.hlafile // sampleName, hlaIfile, hlaIIfile
 
-//    chHlatm =  pVacseqFlow.out.hlaIfile.join(pVacseqFlow.out.hlaIIfile) // sampleName, hlaIfile, hlaIIfile
-    chHlatm =  pVacseqFlow.out.hlafile // sampleName, hlaIfile, hlaIIfile
+      pVacFuseFlow (
+            chRnaBam, // sampleName, RnaBam, RnaBamIndex
+            chStarSibIndex,
+            chGtfSib,
+            chFastaSib,
+            chFastaSibFai,
+            chLayout,
+            chBlackList,
+            chProteinGff,
+            chHlatm, // sampleName, hlaIfile, hlaIIfile
+            chAlgos,
+            chIedbPath
+          )
 
-
-    pVacFuseFlow (
-          chRnaBam, // sampleName, RnaBam, RnaBamIndex
-          chStarSibIndex,
-          chGtfSib,
-          chFastaSib,
-          chFastaSibFai,
-          chLayout,
-          chBlackList,
-          chProteinGff,
-          chHlatm, // sampleName, hlaIfile, hlaIIfile
-          chAlgos,
-          chIedbPath
-        )
+    }
 
     //*******************************************
     // mixcr
 
+  if (('mixcr' in step)){
       mixcr(
         chPairRnaFastq, // sampleName, fastqRnaR1, fastqRnaR2
         chSpecies,
         chMiLicense
         )
-
+    }
 }

@@ -20,9 +20,9 @@ process pvacseqRun {
 
   output:
   // tuple val(meta), path("*hlatypes.txt"), emit: hlaAll
-  tuple val(meta), path("${meta.sampleName}/*/*.fa"), emit: pvacSeqFa
-  tuple val(meta), path("${meta.sampleName}/*/*.tsv"), emit: pvacSeqTsv
-  tuple val(meta), path("${meta.sampleName}/*/*.json"), emit: pvacSeqJson
+  tuple val(meta), path("${meta.sampleName}/*/*.fa"), optional: true, emit: pvacSeqFa
+  tuple val(meta), path("${meta.sampleName}/*/*.tsv"), optional: true, emit: pvacSeqTsv
+  tuple val(meta), path("${meta.sampleName}/*/*.json"), optional: true, emit: pvacSeqJson
 
   script:
   def args = task.ext.args ?: ''

@@ -104,6 +104,34 @@ The sample plan is expected to contain the following fields (with no header):
 sampleID, sampleName, normalName, path_to_fastqDnaR1, path_to_fastqDnaR2, path_to_sampleDnaBam, path_to_sampleDnaBamIndex, path_to_vcf,  path_to_fastqRnaR1, path_to_fastqRnaR2, path_to_sampleRnaBam, path_to_sampleRnaBamIndex
 ```
 
+
+### Steps
+
+Basic steps are the following: HLAtyping, RNAquant, pVacseq, pVacfuse, mixcr.
+They can be use separately (e.g.: --step HLAtyping or --step RNAquant or --step mixcr) or combined partially (e.g.: --step HLAtyping,RNAquant,pVacseq ;  --step HLAtyping,pVacfuse) or all together (--step HLAtyping, RNAquant, pVacseq, pVacfuse, mixcr) using the --step option. 
+
+#### HLA typing
+
+If you only want to get HLA alleles (MHCI & MHCII), add the step "--step HLAtyping" to your command line. If you already have the two gene-based and transcript-based expression files, add the full path to the sample plan as follow:
+
+```
+sampleID, sampleName, normalName, path_to_fastqDnaR1, path_to_fastqDnaR2, path_to_sampleDnaBam, path_to_sampleDnaBamIndex, path_to_vcf,  path_to_fastqRnaR1, path_to_fastqRnaR2, path_to_sampleRnaBam, path_to_sampleRnaBamIndex,path_to_HLAI_file,path_toHLAII_file
+```
+
+#### RNA expression
+
+If you only want to get transcript/gene based expression files (tpm), add the step "--step RNAquant" to your command line. If you already have the two gene-based and transcript-based expression files, add the full path to the sample plan as follow:
+
+
+```
+sampleID, sampleName, normalName, path_to_fastqDnaR1, path_to_fastqDnaR2, path_to_sampleDnaBam, path_to_sampleDnaBamIndex, path_to_vcf,  path_to_fastqRnaR1, path_to_fastqRnaR2, path_to_sampleRnaBam, path_to_sampleRnaBamIndex,path_to_HLAI_file,path_toHLAII_file,path_to_gene_tpm_file,path_to_transcript_tpm_file
+```
+
+or, if you want to run the HLAtyping step (--step HLAtyping,RNAquant,pVacseq)
+```
+sampleID, sampleName, normalName, path_to_fastqDnaR1, path_to_fastqDnaR2, path_to_sampleDnaBam, path_to_sampleDnaBamIndex, path_to_vcf,  path_to_fastqRnaR1, path_to_fastqRnaR2, path_to_sampleRnaBam, path_to_sampleRnaBamIndex,,,path_to_gene_tpm_file,path_to_transcript_tpm_file
+```
+
 ## Credits
 
 This pipeline has been written by Institut Curie bioinformatics platform CUBIC (E.Girard, N.Servant). The project was funded by IMMUcan, the integrated European immuno-oncology profiling platform. 

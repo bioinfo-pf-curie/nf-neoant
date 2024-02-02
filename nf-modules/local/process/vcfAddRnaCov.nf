@@ -17,11 +17,17 @@ process vcfAddRnaCov {
   script:
   """
 
-  vcf-readcount-annotator -s ${meta.sampleName} -t snv -o ${meta.sampleName}.vt.snv.rna.vcf ${splitSnvVcf} ${splitSnvTxt}  RNA 
-  vcf-readcount-annotator -s ${meta.sampleName} -t indel -o ${meta.sampleName}.vt.indel.rna.vcf ${splitIndelVcf} ${splitIndelTxt}  RNA 
+  if [ -s ${splitSnvTxt} ] ; then 
+    vcf-readcount-annotator -s ${meta.sampleName} -t snv -o ${meta.sampleName}.vt.snv.rna.vcf ${splitSnvVcf} ${splitSnvTxt}  RNA 
+    grep "^#\\|:RAF" ${meta.sampleName}.vt.snv.rna.vcf  > ${meta.sampleName}.vt.annot.vcf 
 
-  grep "^#\\|:RAF" ${meta.sampleName}.vt.snv.rna.vcf  > ${meta.sampleName}.vt.annot.vcf 
-  grep ":RAF" ${meta.sampleName}.vt.indel.rna.vcf  >> ${meta.sampleName}.vt.annot.vcf 
+  fi
+
+  if [ -s ${splitIndelTxt} ] ; then 
+    vcf-readcount-annotator -s ${meta.sampleName} -t indel -o ${meta.sampleName}.vt.indel.rna.vcf ${splitIndelVcf} ${splitIndelTxt}  RNA 
+    grep ":RAF" ${meta.sampleName}.vt.indel.rna.vcf  >> ${meta.sampleName}.vt.annot.vcf 
+  fi
+
 
 
   """

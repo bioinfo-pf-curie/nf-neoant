@@ -1,8 +1,0 @@
-name: bcftools
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-  - default
-dependencies:
-  - bcftools=1.15.1=h0ea216a_0

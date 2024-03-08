@@ -1,8 +1,0 @@
-name: vep
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-  - default
-dependencies:
-  - ensembl-vep=110.1=pl5321h2a3209d_0

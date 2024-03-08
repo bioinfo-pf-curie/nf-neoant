@@ -27,6 +27,7 @@ image: ${DEPLOY_DOCKER_IMAGE}
 
 stages:
   - detect_env      # detect the environment for the deployment
+  - lint
   - set_env         # set environment variables passed to other jobs
   - check           # check that requirements are met before starting the deployement
   - generate_ci_yml # generate ci yml files from templates
@@ -91,6 +92,21 @@ no_go:
   rules:
     - if: '$CI_COMMIT_TAG != null && $CI_COMMIT_TAG !~ /v[0-9]*\.[0-9]*\.[0-9]*/'
       when: manual # need to have manual for each if
+
+#############################
+# Perform preliminary check #
+#############################
+
+geniac_lint:
+  # This jobs launches geniac lint on the analysis pipeline repo
+  stage: lint
+  script:
+    - echo "Geniac lint"
+    - source /opt/etc/bashrc # needed to activate the geniac conda env
+    - geniac --version
+    - geniac lint ${CI_PROJECT_DIR}
+  rules:
+    - if: '$IS_NF_CORE == ""'
 
 
 #########################################################
@@ -162,21 +178,6 @@ signature_deffiles:
   artifacts:
     reports:
       dotenv: sha256-deffiles.env
-
-#############################
-# Perform preliminary check #
-#############################
-
-geniac_lint:
-  # This jobs launches geniac lint on the analysis pipeline repo
-  stage: check
-  script:
-    - echo "Geniac lint"
-    - source /opt/etc/bashrc # needed to activate the geniac conda env
-    - geniac --version
-    - geniac lint ${CI_PROJECT_DIR}
-  rules:
-    - if: '$IS_NF_CORE == ""'
 
 
 ###############################################################

@@ -1,0 +1,8 @@
+name: arriba
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  - default
+dependencies:
+  - arriba=2.4.0=h0033a41_2

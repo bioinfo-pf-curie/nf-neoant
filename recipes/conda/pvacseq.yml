@@ -1,0 +1,13 @@
+name: pvacseq
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  - default
+dependencies:
+  - python=3.7.6=cpython_h8356626_6
+  - pip
+  - pip : 
+    - pvactools==4.0.6
+    - vatools==5.1.0
+

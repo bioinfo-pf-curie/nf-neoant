@@ -1,9 +1,8 @@
-name: mixcr
+name: hlala
 channels:
-  - milaboratories
   - conda-forge
   - bioconda
   - defaults
   - default
 dependencies:
-  - mixcr=4.5.0=0
+  - hla-la=1.0.3=hdcf5f25_2

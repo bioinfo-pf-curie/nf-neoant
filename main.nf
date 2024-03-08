@@ -159,7 +159,7 @@ include { pVacseqFlow } from './nf-modules/local/subworkflow/pVacseqFlow'
 include { pVacFuseFlow } from './nf-modules/local/subworkflow/pVacFuseFlow'
 
 // Processes
-include { getSoftwareVersions } from './nf-modules/common/process/getSoftwareVersions'
+//include { getSoftwareVersions } from './nf-modules/common/process/getSoftwareVersions'
 include { outputDocumentation } from './nf-modules/common/process/outputDocumentation'
 include { mixcr } from './nf-modules/local/process/mixcr'
 include { seq2HLA } from './nf-modules/local/process/seq2HLA'

@@ -1,3 +1,4 @@
+name: seq2hla
 channels:
   - conda-forge
   - bioconda

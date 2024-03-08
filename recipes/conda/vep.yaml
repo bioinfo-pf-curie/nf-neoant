@@ -1,9 +1,8 @@
-name: mixcr
+name: vep
 channels:
-  - milaboratories
   - conda-forge
   - bioconda
   - defaults
   - default
 dependencies:
-  - mixcr=4.5.0=0
+  - ensembl-vep=110.1=pl5321h2a3209d_0

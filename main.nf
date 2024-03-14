@@ -309,3 +309,8 @@ workflow {
         )
     }
 }
+
+
+workflow.onComplete {
+  NFTools.makeReports(workflow, params, summary, customRunName, mqcReport)
+}

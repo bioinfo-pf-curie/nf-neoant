@@ -373,13 +373,16 @@ Available Profiles
        * @return
        */
 
-      public static Object getInputData(samplePlan) {
+      public static Object getInputData(samplePlan, workflow) {
 
         if (samplePlan) {
       	  return Channel
             .fromPath(samplePlan)
             .splitCsv(header: false)
             .map { row ->
+            for (int i=0; i < row.size(); i++) {
+              row[i] = row[i].replaceAll('\\\$projectDir', "${workflow.projectDir}")
+            }
 	      def meta = [:]
               meta.sampleId = row[0]
               meta.sampleName = row[1]

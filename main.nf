@@ -83,7 +83,9 @@ workflowSummaryCh = NFTools.summarize(summary, workflow, params)
 */
 
 // Load raw data
-chRawData = NFTools.getInputData(params.samplePlan)
+// chRawData = NFTools.getInputData(params.samplePlan,params.readPaths)
+chRawData = NFTools.getInputData(params.samplePlan, workflow)
+
 //return [sampleId, sampleName , normalName, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex] 
 //return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex] 
 
@@ -175,12 +177,11 @@ workflow {
 
   main:
 
-    chRawData
+     chRawData
       .map{ it ->
-        def meta = [sampleName:it[0].sampleName] //[meta], fastqRnaR1, fastqRnaR2
+        def meta = [sampleName:it[0].sampleName] //[meta].sampleName, fastqRnaR1, fastqRnaR2
         return [meta, it[6], it[7] ]
-      }.set{ chPairRnaFastq }
-
+      }.set{ chPairRnaFastq }   
 
 
     //*******************************************
@@ -198,7 +199,7 @@ workflow {
       }else{
         chRawData
           .map{ it ->
-              def meta = [sampleName:it[0].sampleName ]
+              def meta = [sampleName:it[0].sampleName]
               return [meta, it[12],it[13]] // [meta], tpmGene, tpmTranscript
             }.set{ chRNAtm }
         }
@@ -206,7 +207,7 @@ workflow {
     if (('pVacseq' in step)){
       chRawData
         .map{ it ->
-          def meta = [sampleName:it[0].sampleName ] //[meta], vcf
+          def meta = [sampleName:it[0].sampleName] //[meta], vcf
           return [meta, it[5], it[8], it[9] ]
         }.set{ chDnaVcfRnaBam }
 
@@ -232,8 +233,8 @@ workflow {
 
      chRawData
         .map{ it ->
-            def meta = [sampleName:it[0].sampleName ]
-            return [meta, it[6],it[7]] // sampleName, RNA Fastq1, RNA Fastq2
+         def meta = [sampleName:it[0].sampleName] //[meta].sampleName, fastqRnaR1, fastqRnaR2
+           return [meta, it[6],it[7]] // sampleName, RNA Fastq1, RNA Fastq2
           }.set{ chRNAFastqt } 
 
       seq2HLA(
@@ -245,7 +246,7 @@ workflow {
    } else {
       chRawData
         .map{ it ->
-            def meta = [sampleName:it[0].sampleName ]
+            def meta = [sampleName:it[0].sampleName]
             return [meta, it[10],it[11]] // sampleName, hlaIfile, hlaIIfile
           }.set{ chHlatm }
    }
@@ -274,7 +275,7 @@ workflow {
   if (('pVacfuse' in step)){
       chRawData
         .map{ it ->
-          def meta = [sampleName:it[0].sampleName ]
+          def meta = [sampleName:it[0].sampleName]
           return [meta, it[8], it[9] ]
         }.set{ chRnaBam }
 

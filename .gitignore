@@ -4,4 +4,4 @@
 /.nextflow/
 /ref/*
 /pvacview/*
-/test/*
+/test/results/*

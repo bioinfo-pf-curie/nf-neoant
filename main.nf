@@ -70,7 +70,8 @@ summary = [
   'Container': workflow.containerEngine && workflow.container ? "${workflow.containerEngine} - ${workflow.container}" : null,
   'Profile' : workflow.profile,
   'OutDir' : params.outDir,
-  'WorkDir': workflow.workDir
+  'WorkDir': workflow.workDir,
+  'Script dir': workflow.projectDir
 ].findAll{ it.value != null }
 
 workflowSummaryCh = NFTools.summarize(summary, workflow, params)

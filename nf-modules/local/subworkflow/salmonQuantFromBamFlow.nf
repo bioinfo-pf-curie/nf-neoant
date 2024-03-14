@@ -14,7 +14,7 @@ workflow salmonQuantFromBamFlow {
   gff
 
   main:
-
+  
   starAlign(
     sp,
     starIndex,

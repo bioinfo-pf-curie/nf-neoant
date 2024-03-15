@@ -149,6 +149,9 @@ chVtTools           = params.vtTools      ? Channel.fromPath(params.vtTools, che
 chSpecies           = params.species
 chMiLicense         = params.miLicense    
 
+chTmpdir          = params.tmpdir      ? Channel.fromPath(params.tmpdir, checkIfExists: true).collect()       : Channel.empty()
+
+
 /*
 ==================================
            INCLUDE
@@ -293,7 +296,8 @@ workflow {
             chProteinGff,
             chHlatm, // sampleName, hlaIfile, hlaIIfile
             chAlgos,
-            chIedbPath
+            chIedbPath,
+            chTmpdir
           )
 
     }

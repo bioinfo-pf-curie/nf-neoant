@@ -17,13 +17,14 @@ process arribaFusion {
   val layout // PE
   path blacklist_tsv 
   path protein_gff 
+  path tmpdir
 
   output:
   tuple val(meta), path("*_star_arriba.fusions.tsv"), emit: arribaFus
 
   script:
   """
-	samtools collate -@ ${task.cpus} -u -f -r 1000000 -O ${sampleRnaBam} |  samtools view  - | cut -f 1-11 > ${meta.sampleName}_collate.sam
+	samtools collate -@ ${task.cpus} -T ${tmpdir} -u -f -r 1000000 -O ${sampleRnaBam} |  samtools view  - | cut -f 1-11 > ${meta.sampleName}_collate.sam
 
 	awk -F '\t' -v ASSEMBLY_FA=${fasta} -v LAYOUT=${layout} -v STAR_PIPE="${meta.sampleName}_star_realigned.sam" '
 	    BEGIN{

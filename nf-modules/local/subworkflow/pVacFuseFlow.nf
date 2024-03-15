@@ -20,6 +20,7 @@ workflow pVacFuseFlow {
   hlat // sampleName, hlaIfile, hlaIIfile
   algos
   iedbPath
+  tmpdir
 
   main:
 
@@ -31,7 +32,8 @@ workflow pVacFuseFlow {
     fastaFai,
     layout,
     blacklist_tsv,
-    protein_gff
+    protein_gff,
+    tmpdir
   )
 
   chFusHlam =  arribaFusion.out.arribaFus.join(hlat) // sampleName, FusionFile, hlaIfile, hlaIIfile

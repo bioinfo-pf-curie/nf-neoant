@@ -144,7 +144,7 @@ chMinCovRna         = params.min_cov_rna
 
 chIedbPath          = params.iedb_path      ? Channel.fromPath(params.iedb_path, checkIfExists: true).collect()       : Channel.empty()
 
-chVtTools           = params.vtTools      ? Channel.fromPath(params.vtTools, checkIfExists: true).collect()       : Channel.empty()
+// chVtTools           = params.vtTools      ? Channel.fromPath(params.vtTools, checkIfExists: true).collect()       : Channel.empty()
 
 chSpecies           = params.species
 chMiLicense         = params.miLicense    
@@ -225,8 +225,7 @@ workflow {
             chFastaFai,
             chFastaDict,
             chVepPlugin,
-            chRNAtm,
-            chVtTools
+            chRNAtm
         )
     }
 

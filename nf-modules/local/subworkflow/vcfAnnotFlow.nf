@@ -18,7 +18,6 @@ workflow vcfAnnotFlow {
   fastaDict
   vep_plugin_repo
   tpm
-  vt
 
   main:
   chVepVcfTpm = Channel.empty()
@@ -41,7 +40,6 @@ workflow vcfAnnotFlow {
 
   vcfSplit(
     chExprVcfRnaBam,
-    vt,
     fasta,
     fastaIndex,
     fastaDict,

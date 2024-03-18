@@ -25,7 +25,7 @@ process vcfSplit {
 
   # first split multi-allelic sites 
   
-  ./${vt} decompose -s ${exprVcf} -o \${prefix}.vt.vcf 
+  bcftools norm -m - ${exprVcf} > \${prefix}.vt.vcf 
  
   # add readcount information 
 

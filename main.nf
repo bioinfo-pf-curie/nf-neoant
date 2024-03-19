@@ -225,7 +225,8 @@ workflow {
             chFastaFai,
             chFastaDict,
             chVepPlugin,
-            chRNAtm
+            chRNAtm,
+            chTmpdir
         )
     }
 

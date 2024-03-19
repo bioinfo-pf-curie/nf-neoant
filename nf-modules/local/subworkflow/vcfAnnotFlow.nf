@@ -18,6 +18,7 @@ workflow vcfAnnotFlow {
   fastaDict
   vep_plugin_repo
   tpm
+  tmpdir
 
   main:
   chVepVcfTpm = Channel.empty()
@@ -42,7 +43,7 @@ workflow vcfAnnotFlow {
     chExprVcfRnaBam,
     fasta,
     fastaIndex,
-    fastaDict,
+    fastaDict
     )
 
   vcfAddRnaCov(
@@ -50,7 +51,8 @@ workflow vcfAnnotFlow {
     )
 
   sortVcf(
-    vcfAddRnaCov.out.rnaCovVcf
+    vcfAddRnaCov.out.rnaCovVcf,
+    tmpdir
     )
 
   emit:

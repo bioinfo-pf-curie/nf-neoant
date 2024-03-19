@@ -11,6 +11,7 @@ process sortVcf {
 
   input:
   tuple val(meta), path(annotVcf)
+  path tmpdir
   
   output:
   tuple val(meta), path("*.sorted.filt.vcf.gz"), emit: sortedVcf
@@ -25,7 +26,7 @@ process sortVcf {
 
   declare prefix=\$(basename ${annotVcf} .vcf)
 
-  bcftools sort -Oz ${annotVcf} > \${prefix}.sorted.vcf.gz  
+  bcftools sort --temp-dir ${tmpdir} -Oz ${annotVcf} > \${prefix}.sorted.vcf.gz  
 
   bcftools view -Oz -i '${args}' \${prefix}.sorted.vcf.gz --threads ${task.cpus} -o \${prefix}.sorted.filt.vcf.gz
 

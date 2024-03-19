@@ -10,7 +10,7 @@ process vcfSplit {
 
   input:
   tuple val(meta), path(exprVcf), path(sampleRnaBam), path(sampleRnaBamIndex)
-  path vt
+//  path vt
   path fasta
   path fastaIndex
   path fastaDict

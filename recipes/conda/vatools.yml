@@ -1,4 +1,4 @@
-name: pvacseq
+name: vatools
 channels:
 - conda-forge
 - bioconda
@@ -11,5 +11,4 @@ dependencies:
 - xorg-libx11=1.8.7=h8ee46fc_0
 - pip
 - pip :
-  - pvactools==4.0.6
   - vatools==5.1.0

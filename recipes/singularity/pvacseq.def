@@ -1,6 +1,6 @@
 Bootstrap: docker
 
-From:griffithlab/pvactools
+From:griffithlab/pvactools:4.1.1
 
 %environment
 

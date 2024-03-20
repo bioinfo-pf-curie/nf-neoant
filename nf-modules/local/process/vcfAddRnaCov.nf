@@ -4,7 +4,7 @@
 
 process vcfAddRnaCov {
   tag "${meta.sampleName}"
-  label 'pvacseq'
+  label 'vatools'
   label "medCpu"
   label "medMem"
 

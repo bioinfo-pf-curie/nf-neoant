@@ -22,6 +22,8 @@ process mixcr {
 
     export MI_LICENSE_FILE="${mi_license}"
 
+    export TMPDIR="/tmp"
+
     mixcr analyze rna-seq \
         --threads ${task.cpus} \
         --species ${species} \

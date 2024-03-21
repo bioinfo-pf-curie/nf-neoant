@@ -142,7 +142,7 @@ chMinVafNormal      = params.min_vaf_normal
 chMinCovDna         = params.min_cov_dna  
 chMinCovRna         = params.min_cov_rna   
 
-chIedbPath          = params.iedb_path      ? Channel.fromPath(params.iedb_path).collect()       : Channel.empty()
+// chIedbPath          = params.iedb_path      ? Channel.fromPath(params.iedb_path).collect()       : Channel.empty()
 
 // chVtTools           = params.vtTools      ? Channel.fromPath(params.vtTools, checkIfExists: true).collect()       : Channel.empty()
 
@@ -268,8 +268,8 @@ workflow {
             chMinVafRna,
             chMinVafNormal,
             chMinCovDna,
-            chMinCovRna,
-            chIedbPath 
+            chMinCovRna//,
+            // chIedbPath 
           )
   }
 
@@ -296,7 +296,7 @@ workflow {
             chProteinGff,
             chHlatm, // sampleName, hlaIfile, hlaIIfile
             chAlgos,
-            chIedbPath,
+            // chIedbPath,
             chTmpdir
           )
 

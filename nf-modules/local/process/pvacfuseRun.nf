@@ -11,7 +11,7 @@ process pvacfuseRun {
   input:
   tuple val(meta), path(fusionFile), path(hlaI), path(hlaII)
   val algos
-  path iedbPath
+  // path iedbPath
 
   output:
   path("${meta.sampleName}/*/*.fa"), optional: true, emit: pvacFuseFa
@@ -31,6 +31,8 @@ process pvacfuseRun {
   
   iedbp="/opt/iedb"
 
+  export TMPDIR="/tmp"
+
   if [[ \${#fus_str} != 1 ]] ; then 
 
     pvacfuse run \
@@ -48,11 +50,9 @@ process pvacfuseRun {
           --expn-val 0.1 \
           --downstream-sequence-length full \
           --binding-threshold 500 \
-          --keep-tmp-files \
           --net-chop-method cterm \
           --netmhc-stab \
           --net-chop-threshold 0.5 
-
   fi 
           
   """

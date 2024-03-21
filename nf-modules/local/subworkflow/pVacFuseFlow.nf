@@ -19,7 +19,7 @@ workflow pVacFuseFlow {
   protein_gff
   hlat // sampleName, hlaIfile, hlaIIfile
   algos
-  iedbPath
+  // iedbPath
   tmpdir
 
   main:
@@ -41,8 +41,8 @@ workflow pVacFuseFlow {
 
   pvacfuseRun(
     chFusHlam,  // sampleName, FusionFile, hlaIfile, hlaIIfile
-    algos,
-    iedbPath
+    algos//,
+    // iedbPath
   )
 
   emit:

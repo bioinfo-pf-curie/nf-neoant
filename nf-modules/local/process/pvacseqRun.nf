@@ -16,7 +16,7 @@ process pvacseqRun {
   val minVafNormal
   val minCovDna
   val minCovRna
-  path iedbPath
+  // path iedbPath
 
   output:
   // tuple val(meta), path("*hlatypes.txt"), emit: hlaAll
@@ -39,6 +39,8 @@ process pvacseqRun {
   normalId=\$(zgrep "normal_sample"  ${rnaCovVcf} | cut -f2 -d"=")
 
   iedbp="/opt/iedb"
+
+  export TMPDIR="/tmp"
 
   pvacseq run \
             ${rnaCovVcf} \

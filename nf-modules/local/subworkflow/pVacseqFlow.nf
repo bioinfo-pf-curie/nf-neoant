@@ -22,7 +22,7 @@ workflow pVacseqFlow {
   minVafNormal
   minCovDna
   minCovRna  
-  iedbPath 
+  // iedbPath 
 
   main:
 
@@ -74,8 +74,8 @@ workflow pVacseqFlow {
     minVafRna,
     minVafNormal,
     minCovDna,
-    minCovRna,    
-    iedbPath 
+    minCovRna//,    
+    // iedbPath 
     )
 
   //seq2HLA.out.hla.view()

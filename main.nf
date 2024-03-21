@@ -142,7 +142,7 @@ chMinVafNormal      = params.min_vaf_normal
 chMinCovDna         = params.min_cov_dna  
 chMinCovRna         = params.min_cov_rna   
 
-chIedbPath          = params.iedb_path      ? Channel.fromPath(params.iedb_path, checkIfExists: true).collect()       : Channel.empty()
+chIedbPath          = params.iedb_path      ? Channel.fromPath(params.iedb_path).collect()       : Channel.empty()
 
 // chVtTools           = params.vtTools      ? Channel.fromPath(params.vtTools, checkIfExists: true).collect()       : Channel.empty()
 

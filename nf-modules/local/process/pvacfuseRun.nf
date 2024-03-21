@@ -29,6 +29,8 @@ process pvacfuseRun {
 
   fus_str=\$(awk 'NR!=1{print \$16}' ${fusionFile} | sort | uniq)
   
+  iedbp="/opt/iedb"
+
   if [[ \${#fus_str} != 1 ]] ; then 
 
     pvacfuse run \
@@ -40,7 +42,7 @@ process pvacfuseRun {
           --class-i-epitope-length 8,9,10,11 \
           --class-ii-epitope-length 12,13,14,15,16,17,18 \
           --top-score-metric lowest \
-          --iedb-install-directory ${iedbPath} \
+          --iedb-install-directory \${iedbp} \
           --n-threads ${task.cpus} \
           --read-support 5 \
           --expn-val 0.1 \

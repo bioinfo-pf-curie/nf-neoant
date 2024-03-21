@@ -38,6 +38,8 @@ process pvacseqRun {
 
   normalId=\$(zgrep "normal_sample"  ${rnaCovVcf} | cut -f2 -d"=")
 
+  iedbp="/opt/iedb"
+
   pvacseq run \
             ${rnaCovVcf} \
             ${meta.sampleName} \
@@ -49,7 +51,7 @@ process pvacseqRun {
             --trna-vaf ${minVafRna} \
             --normal-sample-name \${normalId} \
             --normal-vaf ${minVafNormal} \
-            --iedb-install-directory ${iedbPath} \
+            --iedb-install-directory \${iedbp} \
             --tdna-cov ${minCovDna} \
             --trna-cov ${minCovRna} \
             ${args}

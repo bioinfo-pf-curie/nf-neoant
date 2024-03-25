@@ -70,6 +70,7 @@ The objective of the pipeline is to predict tumor-specific neoantigen based on b
 <!-- - graph_name : name of the graph for HLA-LA (PRG_MHC_GRCh38_withIMGT) -->
 
 - blacklist_tsv: file obtained from downloading [arriba archive](https://github.com/suhrig/arriba/releases) (in the /database  folder) called "blacklist_${assembly}*.tsv.gz"
+
 - proteinGff: file obtained from downloading [arriba archive](https://github.com/suhrig/arriba/releases) (in the /database  folder) called "protein_domain_${assembly}*.gff3"
 
 <!-- - iedb_path: path to the uncompressed [MHCI](https://downloads.iedb.org/tools/mhci/) & [MHCII](https://downloads.iedb.org/tools/mhcii/) IEDB archives. Warning: the path must be shorter than 57 characters  -->
@@ -79,7 +80,6 @@ The objective of the pipeline is to predict tumor-specific neoantigen based on b
 - tmpdir: path to temporary folder
 
 ```bash
-
 nextflow run main.nf --samplePlan ${sample_plan} \
                      --genome ${assembly} \
                      --genomeAnnotationPath ${genomePath} \
@@ -137,9 +137,7 @@ Run the pipeline on the test dataset that will launch HLAtyping:
 
 
 ```bash
-
 nextflow run main.nf -profile test,singularity --outDir ${outputDir} --singularityImagePath ${sif} -w ${work_dir}
-
 ```
 
 

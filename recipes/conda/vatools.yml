@@ -1,0 +1,14 @@
+name: vatools
+channels:
+- conda-forge
+- bioconda
+- defaults
+- default
+dependencies:
+- python=3.8.18=hd12c33a_1_cpython
+- gcc=9.4.0=h192d537_10
+- gxx=9.4.0=h192d537_10
+- xorg-libx11=1.8.7=h8ee46fc_0
+- pip
+- pip :
+  - vatools==5.1.0

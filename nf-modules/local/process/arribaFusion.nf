@@ -11,9 +11,9 @@ process arribaFusion {
   input:
   tuple val(meta), path(sampleRnaBam), path(sampleRnaBamIndex)
   path star_index
-  path annotation_gtf //sib
+  path annotation_gtf 
   path fasta // fasta sib 
-  path fastaFai 
+  path fastaFai // fasta fai sib
   val layout // PE
   path blacklist_tsv 
   path protein_gff 

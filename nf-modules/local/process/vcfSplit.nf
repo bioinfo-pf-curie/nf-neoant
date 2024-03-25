@@ -10,7 +10,6 @@ process vcfSplit {
 
   input:
   tuple val(meta), path(exprVcf), path(sampleRnaBam), path(sampleRnaBamIndex)
-//  path vt
   path fasta
   path fastaIndex
   path fastaDict
@@ -37,7 +36,6 @@ process vcfSplit {
 
   bam-readcount -w1 -f ${fasta} -l \${prefix}.vt.snv.list  ${sampleRnaBam}  > \${prefix}.vt.readcount.snv.txt 
   bam-readcount -w1 -f ${fasta} -l \${prefix}.vt.indel.list  ${sampleRnaBam} -i > \${prefix}.vt.readcount.indel.txt 
-
 
   """
 }

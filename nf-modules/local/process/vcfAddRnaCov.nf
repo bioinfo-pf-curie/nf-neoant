@@ -28,8 +28,6 @@ process vcfAddRnaCov {
     grep ":RAF" ${meta.sampleName}.vt.indel.rna.vcf  >> ${meta.sampleName}.vt.annot.vcf 
   fi
 
-
-
   """
 }
 

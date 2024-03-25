@@ -32,7 +32,6 @@ customRunName = NFTools.checkRunName(workflow.runName, params.name)
 
 // Custom functions/variables
 mqcReport = []
-//include {checkAlignmentPercent} from './lib/functions'
 
 /*
 ===================================
@@ -49,11 +48,6 @@ if (params.genomes && params.genome && !params.genomes.containsKey(params.genome
   exit 1, "The provided genome '${params.genome}' is not available in the genomes file. Currently the available genomes are ${params.genomes.keySet().join(", ")}"
 }
 
-// Stage config files
-// multiqcConfigCh = Channel.fromPath(params.multiqcConfig)
-outputDocsCh = Channel.fromPath("$projectDir/docs/output.md")
-outputDocsImagesCh = file("$projectDir/docs/images/", checkIfExists: true)
-
 
 /*
 ===========================
@@ -67,7 +61,7 @@ summary = [
   'Inputs' : params.samplePlan ?: null,
   'Genome' : params.genome,
   'Max Resources': "${params.maxMemory} memory, ${params.maxCpus} cpus, ${params.maxTime} time per job",
-  'Container': workflow.containerEngine && workflow.container ? "${workflow.containerEngine} - ${workflow.container}" : null,
+  'Container': workflow.containerEngine, 
   'Profile' : workflow.profile,
   'OutDir' : params.outDir,
   'WorkDir': workflow.workDir,
@@ -83,15 +77,9 @@ workflowSummaryCh = NFTools.summarize(summary, workflow, params)
 */
 
 // Load raw data
-// chRawData = NFTools.getInputData(params.samplePlan,params.readPaths)
 chRawData = NFTools.getInputData(params.samplePlan, workflow)
 
-//return [sampleId, sampleName , normalName, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex] 
-//return [meta, fastqDnaR1, fastqDnaR2, sampleDnaBam, sampleDnaBamIndex, vcf, fastqRnaR1, fastqRnaR2, sampleRnaBam, sampleRnaBamIndex] 
-
-
 step = params.step ? params.step.split(',').collect{it.trim()} : []
-
 
 params.fasta = NFTools.getGenomeAttribute(params, 'fasta')
 params.fastaFai = NFTools.getGenomeAttribute(params, 'fastaFai')
@@ -102,7 +90,7 @@ params.transcriptsFasta  = NFTools.getGenomeAttribute(params, 'transcriptsFasta'
 params.fasta_sib = NFTools.getGenomeAttribute(params, 'fasta_sib')
 params.fastaFai_sib = NFTools.getGenomeAttribute(params, 'fastaFai_sib')
 params.star_sib = NFTools.getGenomeAttribute(params, 'star_sib')
-params.gtf_sib = NFTools.getGenomeAttribute(params, 'gtf_sib')
+params.gtf = NFTools.getGenomeAttribute(params, 'gtf')
 params.proteinGff = NFTools.getGenomeAttribute(params, 'proteinGff')
 params.blackList = NFTools.getGenomeAttribute(params, 'blackList')
 
@@ -121,17 +109,13 @@ chTranscriptsFasta  = params.transcriptsFasta      ? Channel.fromPath(params.tra
 chFastaSib          = params.fasta_sib      ? Channel.fromPath(params.fasta_sib, checkIfExists: true).collect()       : Channel.empty()
 chFastaSibFai       = params.fastaFai_sib      ? Channel.fromPath(params.fastaFai_sib, checkIfExists: true).collect()       : Channel.empty()
 chStarSibIndex      = params.star_sib      ? Channel.fromPath(params.star_sib, checkIfExists: true).collect()       : Channel.empty()
-chGtfSib            = params.gtf_sib                   ? Channel.fromPath(params.gtf_sib, checkIfExists: true).collect()                    : Channel.empty()
+chGtf               = params.gtf                   ? Channel.fromPath(params.gtf, checkIfExists: true).collect()                    : Channel.empty()
 chProteinGff        = params.proteinGff      ? Channel.fromPath(params.proteinGff, checkIfExists: true).collect()       : Channel.empty()
 chBlackList         = params.blackList                   ? Channel.fromPath(params.blackList, checkIfExists: true).collect()                    : Channel.empty()
-
-// chGtf               = params.gtf                   ? Channel.fromPath(params.gtf, checkIfExists: true).collect()                    : Channel.empty()
-
 chVepCache          = params.vepDirCache      ? Channel.fromPath(params.vepDirCache, checkIfExists: true).collect()       : Channel.empty()
 chVepPlugin         = params.vepPluginRepo      ? Channel.fromPath(params.vepPluginRepo, checkIfExists: true).collect()       : Channel.empty()
-
-chGraphDir          = params.graphDir      ? Channel.fromPath(params.graphDir, checkIfExists: true).collect()       : Channel.empty()
-chGraphName         = params.graphName  //    ? Channel.Value(params.graphName, checkIfExists: true).collect()       : Channel.empty()
+// chGraphDir          = params.graphDir      ? Channel.fromPath(params.graphDir, checkIfExists: true).collect()       : Channel.empty()
+// chGraphName         = params.graphName
 
 chLayout            = params.layout
 
@@ -143,8 +127,6 @@ chMinCovDna         = params.min_cov_dna
 chMinCovRna         = params.min_cov_rna   
 
 // chIedbPath          = params.iedb_path      ? Channel.fromPath(params.iedb_path).collect()       : Channel.empty()
-
-// chVtTools           = params.vtTools      ? Channel.fromPath(params.vtTools, checkIfExists: true).collect()       : Channel.empty()
 
 chSpecies           = params.species
 chMiLicense         = params.miLicense    
@@ -165,8 +147,6 @@ include { pVacseqFlow } from './nf-modules/local/subworkflow/pVacseqFlow'
 include { pVacFuseFlow } from './nf-modules/local/subworkflow/pVacFuseFlow'
 
 // Processes
-//include { getSoftwareVersions } from './nf-modules/common/process/getSoftwareVersions'
-// include { outputDocumentation } from './nf-modules/common/process/outputDocumentation'
 include { mixcr } from './nf-modules/local/process/mixcr'
 include { seq2HLA } from './nf-modules/local/process/seq2HLA'
 
@@ -245,7 +225,6 @@ workflow {
         )
 
        chHlatm =  seq2HLA.out.hla // sampleName, hlaIfile, hlaIIfile
-      // chVcfHlat =  annotVcf.join(seq2HLA.out.hla) // sampleName, annotVcf, hlaIfile, hlaIIfile
    } else {
       chRawData
         .map{ it ->
@@ -258,9 +237,6 @@ workflow {
     // pVacseq
     if (('pVacseq' in step)){
       pVacseqFlow (
-            // chRawData,
-            // chGraphDir,
-            // chGraphName,
             chHlatm,
             vcfAnnotFlow.out.annotVcf,
             chAlgos,
@@ -268,8 +244,7 @@ workflow {
             chMinVafRna,
             chMinVafNormal,
             chMinCovDna,
-            chMinCovRna//,
-            // chIedbPath 
+            chMinCovRna
           )
   }
 
@@ -282,13 +257,10 @@ workflow {
           return [meta, it[8], it[9] ]
         }.set{ chRnaBam }
 
-  //    chHlatm =  pVacseqFlow.out.hlaIfile.join(pVacseqFlow.out.hlaIIfile) // sampleName, hlaIfile, hlaIIfile
-      // chHlatm =  pVacseqFlow.out.hlafile // sampleName, hlaIfile, hlaIIfile
-
       pVacFuseFlow (
             chRnaBam, // sampleName, RnaBam, RnaBamIndex
             chStarSibIndex,
-            chGtfSib,
+            chGtf,
             chFastaSib,
             chFastaSibFai,
             chLayout,
@@ -296,7 +268,6 @@ workflow {
             chProteinGff,
             chHlatm, // sampleName, hlaIfile, hlaIIfile
             chAlgos,
-            // chIedbPath,
             chTmpdir
           )
 
@@ -313,7 +284,6 @@ workflow {
         )
     }
 }
-
 
 workflow.onComplete {
   NFTools.makeReports(workflow, params, summary, customRunName, mqcReport)

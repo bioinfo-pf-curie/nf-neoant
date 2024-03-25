@@ -11,7 +11,6 @@ process pvacfuseRun {
   input:
   tuple val(meta), path(fusionFile), path(hlaI), path(hlaII)
   val algos
-  // path iedbPath
 
   output:
   path("${meta.sampleName}/*/*.fa"), optional: true, emit: pvacFuseFa

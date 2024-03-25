@@ -1,8 +1,0 @@
-name: hlala
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-  - default
-dependencies:
-  - hla-la=1.0.3=hdcf5f25_2

@@ -20,7 +20,6 @@ process salmonQuantFromBam {
   def args = task.ext.args ?: ''
    
   """
-
   salmon quant \\
     --alignments ${sampleRnaTranscriptBam} \\
     --threads ${task.cpus} \\

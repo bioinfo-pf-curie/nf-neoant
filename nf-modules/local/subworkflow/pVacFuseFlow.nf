@@ -5,7 +5,6 @@
 include { arribaFusion } from '../process/arribaFusion'
 include { pvacfuseRun } from '../process/pvacfuseRun'
 
-
 workflow pVacFuseFlow {
 
   take:
@@ -19,7 +18,6 @@ workflow pVacFuseFlow {
   protein_gff
   hlat // sampleName, hlaIfile, hlaIIfile
   algos
-  // iedbPath
   tmpdir
 
   main:
@@ -38,11 +36,9 @@ workflow pVacFuseFlow {
 
   chFusHlam =  arribaFusion.out.arribaFus.join(hlat) // sampleName, FusionFile, hlaIfile, hlaIIfile
   
-
   pvacfuseRun(
     chFusHlam,  // sampleName, FusionFile, hlaIfile, hlaIIfile
-    algos//,
-    // iedbPath
+    algos
   )
 
   emit:

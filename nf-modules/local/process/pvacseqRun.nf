@@ -16,10 +16,8 @@ process pvacseqRun {
   val minVafNormal
   val minCovDna
   val minCovRna
-  // path iedbPath
 
   output:
-  // tuple val(meta), path("*hlatypes.txt"), emit: hlaAll
   tuple val(meta), path("${meta.sampleName}/*/*.fa"), optional: true, emit: pvacSeqFa
   tuple val(meta), path("${meta.sampleName}/*/*.tsv"), optional: true, emit: pvacSeqTsv
   tuple val(meta), path("${meta.sampleName}/*/*.json"), optional: true, emit: pvacSeqJson

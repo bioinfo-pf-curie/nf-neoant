@@ -48,10 +48,7 @@ process pvacfuseRun {
           --read-support 5 \
           --expn-val 0.1 \
           --downstream-sequence-length full \
-          --binding-threshold 500 \
-          --net-chop-method cterm \
-          --netmhc-stab \
-          --net-chop-threshold 0.5 
+          --binding-threshold 500 
   fi 
           
   """

@@ -1,0 +1,7 @@
+/work/*
+/results/*
+/*.log
+/.nextflow/
+/ref/*
+/pvacview/*
+/test/results/*

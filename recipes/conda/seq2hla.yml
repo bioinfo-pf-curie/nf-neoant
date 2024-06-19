@@ -1,0 +1,8 @@
+name: seq2hla
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  - default
+dependencies:
+  - bioconda::seq2hla=2.3=hdfd78af_1

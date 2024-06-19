@@ -1,0 +1,10 @@
+name: gatk
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  - default
+dependencies:
+  - gatk4=4.1.9.0=py39_0
+  - bam-readcount=0.8=py37pl526h94a8ba4_4
+  - bcftools=1.17=h3cc50cf_1
